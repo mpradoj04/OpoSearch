@@ -1,6 +1,6 @@
 # ── BASE: dependencias comunes ────────────────────────────────────
 FROM node:20-alpine AS base
-WORKDIR /oposearch
+WORKDIR /app
 COPY package*.json ./
  
 # ── DEVELOPMENT: hot-reload con nodemon ───────────────────────────
