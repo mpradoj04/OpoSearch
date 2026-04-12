@@ -17,6 +17,8 @@ const initIndex = async () => {
                         titulos: {type: 'text', analyzer: 'spanish'},
                         capitulos: {type: 'text', analyzer: 'spanish'},
                         articulos: {type: 'text', analyzer: 'spanish'},
+                        contenido: { type: 'text', analyzer: 'spanish' }
+
                     }
                 }
             }
@@ -35,7 +37,8 @@ const indexDocument = async (doc) => {
             temas: doc.temas,
             titulos: doc.titulos,
             capitulos: doc.capitulos,
-            articulos: doc.articulos
+            articulos: doc.articulos,
+            contenido: doc.contenido
         }
 
         const response = await client.index({
