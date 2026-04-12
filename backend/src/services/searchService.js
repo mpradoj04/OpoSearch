@@ -27,36 +27,6 @@ const initIndex = async () => {
      }
 };
 
-const indexDocument = async (doc) => {
-    try {
-        const indexName = 'docs_oposearch';
-
-        const body = {
-            nombre_doc: doc.nombre,
-            cuerpo: doc.cuerpo,
-            temas: doc.temas,
-            titulos: doc.titulos,
-            capitulos: doc.capitulos,
-            articulos: doc.articulos,
-            contenido: doc.contenido
-        }
-
-        const response = await client.index({
-            index: indexName,
-            id: doc._id.toString(),
-            document: body,
-            refresh: true
-        });
-
-        consolelog(`Document indexed with ID: ${response.body._id}`);
-        return response;
-    } catch (error) {
-        console.error('Error indexing document:', error.message);
-        throw error;
-    }
-};
-
 module.exports = {
     initIndex,
-    indexDocument
 }
