@@ -1,0 +1,487 @@
+{
+    "guardia_civil": [
+        {
+            "number": 1,
+            "title": "TEMA 1.- DERECHOS HUMANOS.",
+            "block": "Bloque 1 - Ciencias Jurídicas",
+            "documents": [
+                "Carta De Las Naciones Unidas.pdf",
+                "Declaración Universal de Derechos Humanos..pdf",
+                "Convenio europeo para la protección de los derechos y de las libertades fundamentales.pdf",
+                "Carta Social Europea (ratificada).pdf",
+                "Pacto Internacional de Derechos Económicos, Sociales y Culturales.pdf",
+                "Pacto internacional de Derechos Civiles y Políticos.pdf",
+                "Convención contra la tortura y otros tratos o penas crueles, inhumanas o degradantes, de la.pdf",
+                "Protocolo facultativo de la Convención contra la tortura y otros tratos o penas crueles, inhumanas o.pdf",
+                "Carta de los Derechos Fundamentales de la UE.pdf",
+                "Estatuto de Roma de la Corte Penal Internacional.pdf",
+                "Ley Orgánica 18-2003 de 10 de diciembre de Cooperación con la Corte Penal Internacional.pdf",
+                "Reglamento de Organización y Funcionamiento del Defensor del Pueblo, aprobado por las Mesas.pdf"
+            ]
+        },
+        {
+            "number": 2,
+            "title": "TEMA 2.- IGUALDAD EFECTIVA DE MUJERES Y HOMBRES.",
+            "documents": [
+                "Ley Orgánica 3-2007, de 22 de marzo, para la igualdad efectiva de mujeres y hombres.pdf"
+            ]
+        },
+        {
+            "number": 3,
+            "title": "TEMA 3.- PREVENCIÓN DE RIESGOS LABORALES.",
+            "documents": [
+                "Ley 31-1995, de 8 de noviembre, de Prevención de Riesgos Laborales.pdf",
+                "Real Decreto 67-2010 de adaptación de la legislación de prevención de riesgos laborales a la Administración General del Estado.pdf",
+                "Real Decreto 179-2005, sobre prevención de Riesgos Laborales en la Guardia Civil..pdf"
+            ]
+        },
+        {
+            "number": 4,
+            "title": "TEMA 4.- DERECHO CONSTITUCIONAL.",
+            "documents": [
+                "La Constitución Española de 1978.pdf",
+                "Ley Orgánica 3-1981, de 6 de abril, del Defensor del Pueblo..pdf",
+                "Ley Orgánica 1-1982 de 5 de mayo sobre protección civil del derecho al honor, a la intimidad personal y familiar y a la propia imagen.pdf"
+            ]
+        },
+        {
+            "number": 5,
+            "title": "TEMA 5.- DERECHO DE LA UNIÓN EUROPEA.",
+            "documents": [
+                "Tratado de la Unión Europea.pdf",
+                "Tratado de Funcionamiento de la Unión Europea.pdf"
+            ]
+        },
+        {
+            "number": 7,
+            "title": "TEMA 7.- DERECHO CIVIL.",
+            "documents": [
+                "Real Decreto de 24 de julio de 1889 por el que se publica el Código Civil.pdf"
+            ]
+        },
+        {
+            "number": 8,
+            "title": "TEMA 8.- DERECHO PENAL.",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf"
+            ]
+        },
+        {
+            "number": 9,
+            "title": "TEMA 9.- DERECHO PROCESAL PENAL.",
+            "documents": [
+                "Real Decreto de 14 de septiembre de 1882, aprobatorio de la Ley de Enjuiciamiento Criminal.pdf",
+                "Ley Orgánica 6-1984, de 24 de mayo, reguladora del procedimiento de “Habeas Corpus”.pdf",
+                "Ley Orgánica 6-1985, de 1 de julio, del Poder Judicial.pdf",
+                "Real Decreto 769-1987, de 19 de junio, sobre regulación de la Policía Judicial.pdf",
+                "Ley 4-2015, de 27 de abril, del Estatuto de la víctima del delito.pdf"
+            ]
+        },
+        {
+            "number": 10,
+            "title": "TEMA 10.- DERECHO ADMINISTRATIVO.",
+            "documents": [
+                "Ley 39-2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones.pdf",
+                "Ley 40-2015, de 1 de octubre, de Régimen Jurídico del Sector Público.pdf"
+            ]
+        },
+        {
+            "number": 11,
+            "title": "TEMA 11.- PROTECCIÓN DE DATOS.",
+            "documents": [
+                "Ley Orgánica 3-2018, de Protección de Datos Personales y garantía de los derechos digitales.pdf"
+            ]
+        },
+        {
+            "number": 12,
+            "title": "TEMA 12.- EXTRANJERÍA. INMIGRACIÓN.",
+            "documents": [
+                "Ley Orgánica 4-2000, de 11 de enero, sobre derechos y libertades de los extranjeros en España y su integración social.pdf",
+                "Real Decreto 240-2007, de 16 de febrero, sobre entrada, libre circulación y residencia en España de ciudadanos de los Estados miembros de la Unión Europea.pdf"
+            ]
+        },
+        {
+            "number": 13,
+            "title": "TEMA 13.- SEGURIDAD PÚBLICA Y SEGURIDAD PRIVADA.",
+            "documents": [
+                "Ley Orgánica 4-2015, de 30 de marzo, de protección de la seguridad ciudadana.pdf",
+                "Ley 5-2014, de 4 de abril, de Seguridad Privada.pdf"
+            ]
+        },
+        {
+            "number": 14,
+            "title": "TEMA 14.- MINISTERIO DEL INTERIOR. MINISTERIO DE DEFENSA.",
+            "documents": [
+                "Real Decreto 207-2024, de 27 de febrero, por el que se desarrolla la estructura básica del Ministerio del Interior.pdf",
+                "Real Decreto 372-2020, de 18 de febrero, por el que se desarrolla la estructura orgánica básica del Ministerio de Defensa.pdf"
+            ]
+        },
+        {
+            "number": 15,
+            "title": "TEMA 15.- FUERZAS Y CUERPOS DE SEGURIDAD. GUARDIA CIVIL.",
+            "documents": [
+                "Ley Orgánica 2-1986, de 13 de marzo, de Fuerzas y Cuerpos de Seguridad.pdf",
+                "Ley 29-2014, de 28 de noviembre, de Régimen del Personal del Cuerpo de la Guardia Civil.pdf",
+                "Orden PRE-422-2013, de 15 de marzo, por la que se desarrolla la estructura orgánica de los Servicios Centrales de la Dirección General de la Guardia Civil.pdf",
+                "Ley Orgánica 11-2007, de 22 de octubre, reguladora de los derechos y deberes de los miembros de la Guardia Civil.pdf"
+            ]
+        },
+        {
+            "number": 16,
+            "title": "TEMA 16.- MATERIAS SOCIO-CULTURALES. PROTECCIÓN CIVIL. DESARROLLO SOSTENIBLE. EFICIENCIA ENERGÉTICA.",
+            "documents": [
+                "Ley 17-2015, de 9 de julio, del Sistema Nacional de Protección Civil.pdf",
+                "Ley 42-2007, de 13 de diciembre, del Patrimonio Natural y de la Biodiversidad.pdf",
+                "Directiva 2012-27-UE del Parlamento Europeo y del Consejo de 25 de octubre de 2012, relativa a eficiencia energética.pdf"
+            ]
+        },
+        {
+            "number": 17,
+            "title": "TEMA 17.- MATERIAS TÉCNICO-CIENTÍFICAS. TECNOLOGÍAS DE LA INFORMACIÓN Y LA COMUNICACIÓN.",
+            "documents": [
+                "Ley 11-2022, de 28 de junio, General de Telecomunicaciones.pdf",
+                "Real Decreto 806-2014, de 19 de septiembre, sobre organización e instrumentos operativos de las tecnologías de la información.pdf",
+                "Ley 6-2020, de 11 de noviembre, reguladora de determinados aspectos de los servicios electrónicos.pdf",
+                "Principios y recomendaciones básicas en Ciberseguridad del CCN-CERT.pdf",
+                "Real Decreto 4-2010, de 8 de enero, por el que se regula el Esquema Nacional de Interoperabilidad en el ámbito de la administración Electrónica.pdf"
+            ]
+        },
+        {
+            "number": 19,
+            "title": "TEMA 19.- DEONTOLOGÍA PROFESIONAL.",
+            "documents": [
+                "Principios Básicos sobre el Empleo de la Fuerza y de Armas de Fuego por los Funcionarios.pdf",
+                "Real Decreto 176-2022, de 4 de marzo, por el que se aprueba el código de conducta del personal de la Guardia Civil.pdf"
+            ]
+        },
+        {
+            "number": 20,
+            "title": "TEMA 20.- RESPONSABILIDAD PENAL DE LOS MENORES.",
+            "documents": [
+                "Ley Orgánica 5-2000 de 12 de enero, reguladora de la responsabilidad penal de los menores..pdf"
+            ]
+        },
+        {
+            "number": 21,
+            "title": "TEMA 21.- PROTECCIÓN INTEGRAL CONTRA LA VIOLENCIA DE GÉNERO.",
+            "documents": [
+                "Ley Orgánica 1-2004, de 28 de diciembre, de Medidas de Protección.pdf"
+            ]
+        },
+        {
+            "number": 22,
+            "title": "TEMA 22.- ARMAS Y EXPLOSIVOS.",
+            "documents": [
+                "Real Decreto 137-1993, de 29 de enero, por el que se aprueba el Reglamento de Armas..pdf",
+                "Real Decreto 130-2017, de 24 de febrero, por el que se aprueba el Reglamento de Explosivos..pdf"
+            ]
+        },
+        {
+            "number": 23,
+            "title": "TEMA 23.- DERECHO FISCAL.",
+            "documents": [
+                "Ley Orgánica 12-1995 de 12 de diciembre, de represión del contrabando.pdf",
+                "Real Decreto 1649-1998, de 24 de julio, por la que se desarrolla el Título II de la Ley Orgánica 12-1995 represion del contrabando, relativo ....pdf",
+                "Reglamento (UE) nº 952-2013 del Parlamento Europeo y del Consejo, de 9 de octubre de 2013, por el que se establece el código aduanero de la Unión.pdf"
+            ]
+        }
+    ],
+    "policia_nacional": [
+        {
+            "number": 1,
+            "title": "Tema 1. El Derecho",
+            "documents": [
+                "Real Decreto de 24 de julio de 1889 por el que se publica el Código Civil.pdf",
+                "Constitución Española.pdf",
+                "Ley 12-2015, de 24 de junio, en materia de concesión de la nacionalidad española a los sefardíes originarios de España..pdf",
+                "Ley 20-2011, de 21 de julio, del Registro Civil..pdf",
+                "Ley 20-2022, de 19 de octubre, de Memoria Democrática..pdf"
+            ]
+        },
+        {
+            "number": 2,
+            "title": "Tema 2. La Constitución Española (I) y El Defensor del Pueblo",
+            "documents": [
+                "Constitución Española.pdf",
+                "Ley Orgánica 6-1985, de 1 de julio, del Poder Judicial.pdf",
+                "Ley Orgánica 2-1979, de 3 de octubre, del Tribunal Constitucional..pdf",
+                "Ley Orgánica 3-1980, de 22 de abril, del Consejo de Estado..pdf",
+                "Resolución de 24 de febrero de 1982 por la que se ordena la publicación en el «Boletín Oficial del Estado».pdf",
+                "Texto refundido del Reglamento del Senado aprobado por la Mesa del Senado, oída la Junta de Portavoces, en su reunión del día 3 de mayo de 1994..pdf"
+            ]
+        },
+        {
+            "number": 3,
+            "title": "Tema 3. La Constitución Española (II)",
+            "documents": [
+                "Constitución Española.pdf",
+                "Ley Orgánica 6-1985, de 1 de julio, del Poder Judicial.pdf",
+                "Ley Orgánica 2-1979, de 3 de octubre, del Tribunal Constitucional..pdf",
+                "Ley Orgánica 3-1980, de 22 de abril, del Consejo de Estado..pdf",
+                "Resolución de 24 de febrero de 1982 por la que se ordena la publicación en el «Boletín Oficial del Estado».pdf",
+                "Texto refundido del Reglamento del Senado aprobado por la Mesa del Senado, oída la Junta de Portavoces, en su reunión del día 3 de mayo de 1994..pdf"
+            ]
+        },
+        {
+            "number": 4,
+            "title": "Tema 4. La Unión Europea",
+            "documents": [
+                "Ley Orgánica 9-2021, de 1 de julio, de aplicación del Reglamento (UE) 2017-1939 ....pdf",
+                "Reglamento (UE) 2017-1939 del Consejo, de 12 de octubre de 2017, por el que se establece.pdf",
+                "Tratado de la Unión Europea y Tratado de Funcionamiento de la Unión Europea. Versiones consolidadas. Protocolos..pdf"
+            ]
+        },
+        {
+            "number": 5,
+            "title": "Tema 5. La organización y funcionamiento de la Administración General del Estado",
+            "documents": [
+                "Ley 40-2015, de 1 de octubre, de Régimen Jurídico del Sector Público.pdf",
+                "Real Decreto 890-2023, de 27 de noviembre, por el que se aprueba la estructura de la Presidencia del Gobierno.pdf",
+                "Ley 50-1997, de 27 de noviembre, del Gobierno.pdf"
+            ]
+        },
+        {
+            "number": 6,
+            "title": "Tema 6. Los funcionarios públicos",
+            "documents": [
+                "Real Decreto Legislativo 5-2015, de 30 de octubre, por el que se aprueba el texto refundido de la Ley del Estatuto Básico del Empleado Público..pdf",
+                "Real Decreto 364-1995, de 10 de marzo, por el que se aprueba el Reglamento General de Ingreso del Personal al servicio de la.pdf",
+                "Real Decreto 365-1995, de 10 de marzo, por el que se aprueba el Reglamento de Situaciones.pdf"
+            ]
+        },
+        {
+            "number": 7,
+            "title": "Tema 7. El Ministerio del Interior",
+            "documents": [
+                "Real Decreto 207-2024, de 27 de febrero, por el que se desarrolla la estructura orgánica básica del Ministerio del Interior..pdf",
+                "Real Decreto 1009-2023, de 5 de diciembre, por el que se establece la estructura orgánica básica de los departamentos ministeriales..pdf",
+                "Real Decreto 829-2023, de 20 de noviembre, por el que se reestructuran los departamentos ministeriales..pdf"
+            ]
+        },
+        {
+            "number": 8,
+            "title": "Tema 8. La Dirección General de la Policía",
+            "documents": [
+                "Orden INT-859-2023, de 21 de julio, por la que se desarrolla la estructura orgánica.pdf",
+                "Ley Orgánica 9-2015, de 28 de julio, de Régimen de Personal de la Policía Nacional..pdf",
+                "Ley Orgánica 4-2010, de 20 de mayo, del Régimen disciplinario del Cuerpo Nacional de Policía..pdf",
+                "Orden INT-430-2014, de 10 de marzo, por la que se regula la uniformidad en el Cuerpo Nacional de Policía..pdf"
+            ]
+        },
+        {
+            "number": 9,
+            "title": "Tema 9. La Ley Orgánica 2/1986, de 13 de marzo, de Fuerzas y Cuerpos de Seguridad",
+            "documents": [
+                "Ley Orgánica 2-1986, de 13 de marzo, de Fuerzas y Cuerpos de Seguridad.pdf",
+                "Real Decreto 769-1987, de 19 de junio, sobre regulación de la Policía Judicial.pdf"
+            ]
+        },
+        {
+            "number": 10,
+            "title": "Tema 10. Entrada, libre circulación y residencia en España de ciudadanos de los Estados miembros de la Unión Europea y de otros Estados parte en el Acuerdo sobre el Epacio Económico Europeo",
+            "documents": [
+                "Ley Orgánica 4-2000, de 11 de enero, sobre derechos y libertades de los extranjeros en España y su integración social.pdf",
+                "Real Decreto 240-2007, de 16 de febrero, sobre entrada, libre circulación y residencia en España de ciudadanos de los Estados miembros de la Unión Europea.pdf",
+                "Real Decreto 1155-2024, de 19 de noviembre, por el que se aprueba el Reglamento de la Ley Orgánica 4-2000, de 11 de enero,.pdf"
+            ]
+        },
+        {
+            "number": 11,
+            "title": "Tema 11. De las infracciones en materia de extranjería y su régimen sancionador",
+            "documents": [
+                "Ley Orgánica 4-2000, de 11 de enero, sobre derechos y libertades de los extranjeros en España y su integración social.pdf",
+                "Real Decreto 1155-2024, de 19 de noviembre, por el que se aprueba el Reglamento de la Ley Orgánica 4-2000, de 11 de enero,.pdf"
+            ]
+        },
+        {
+            "number": 12,
+            "title": "Tema 12. La protección internacional",
+            "documents": [
+                "Ley 12-2009, de 30 de octubre, reguladora del derecho de asilo y de la protección subsidiaria..pdf",
+                "Real Decreto 865-2001, de 20 de julio, por el que se aprueba el Reglamento de reconocimiento del estatuto de apátrida..pdf",
+                "Real Decreto 220-2022, de 29 de marzo, por el que se aprueba el Reglamento por el que se regula.pdf",
+                "Real Decreto 1325-2003, de 24 de octubre, por el que se aprueba el Reglamento sobre régimen de protección temporal.pdf",
+                "Orden ISM-922-2023, de 6 de julio, por la que se desarrolla el régimen disciplinario del sistema de acogida en materia de protección internacional..pdf"
+            ]
+        },
+        {
+            "number": 13,
+            "title": "Tema 13. Disposiciones generales en materia de seguridad privada en España",
+            "documents": [
+                "Ley 5-2014, de 4 de abril, de Seguridad Privada.pdf",
+                "Real Decreto 2364-1994, de 9 de diciembre, por el que se aprueba el Reglamento de Seguridad Privada..pdf",
+                "Orden INT-317-2011, de 1 de febrero, sobre medidas de seguridad privada..pdf"
+            ]
+        },
+        {
+            "number": 14,
+            "title": "Tema 14. La Ley Orgánica 4/2015, de 30 de marzo, de protección de la seguridad ciudadana",
+            "documents": [
+                "Ley Orgánica 4-2015, de 30 de marzo, de protección de la seguridad ciudadana.pdf",
+                "Real Decreto 1154-2024, de 19 de noviembre, por el que se regula la expedición del pasaporte provisional y del salvoconducto..pdf",
+                "Real Decreto 255-2025, de 1 de abril, por el que se regula el Documento Nacional de Identidad..pdf"
+            ]
+        },
+        {
+            "number": 15,
+            "title": "Tema 15. Medidas para la Protección de Infraestructuras Críticas",
+            "documents": [
+                "Ley 8-2011, de 28 de abril, por la que se establecen medidas para la protección de las infraestructuras críticas..pdf",
+                "Real Decreto 704-2011, de 20 de mayo, por el que se aprueba el Reglamento de protección de las infraestructuras críticas..pdf",
+                "Orden PCI-487-2019, de 26 de abril, por la que se publica la Estrategia Nacional de Ciberseguridad 2019.pdf",
+                "Real Decreto-ley 12-2018, de 7 de septiembre, de seguridad de las redes y sistemas de información..pdf"
+            ]
+        },
+        {
+            "number": 16,
+            "title": "Tema 16. Derecho Penal Parte General",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf"
+            ]
+        },
+        {
+            "number": 17,
+            "title": "Tema 17. Derecho Penal Especial",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf",
+                "Ley Orgánica 10-2022, de 6 de septiembre, de garantía integral de la libertad sexual..pdf"
+            ]
+        },
+        {
+            "number": 18,
+            "title": "Tema 18. Delitos contra el patrimonio y contra el orden socioeconómico",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf"
+            ]
+        },
+        {
+            "number": 19,
+            "title": "Tema 19. Delitos contra el orden público",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf"
+            ]
+        },
+        {
+            "number": 20,
+            "title": "Tema 20. Delitos informáticos",
+            "documents": [
+                "Ley Orgánica 10-1995, de 23 de noviembre, del Código Penal..pdf",
+                "Ley Orgánica 1-1982, de 5 de mayo, de protección civil del derecho al honor, a la intimidad personal y familiar y a la propia imagen.pdf",
+                "Ley Orgánica 4-1997, de 4 de agosto, por la que se regula la utilización de videocámaras por las Fuerzas y Cuerpos de Seguridad en lugares públicos..pdf",
+                "Real Decreto de 14 de septiembre de 1882, aprobatorio de la Ley de Enjuiciamiento Criminal.pdf"
+            ]
+        },
+        {
+            "number": 21,
+            "title": "Tema 21. Noción de Derecho Procesal Penal",
+            "documents": [
+                "Ley Orgánica 6-1985, de 1 de julio, del Poder Judicial.pdf",
+                "Real Decreto de 14 de septiembre de 1882, aprobatorio de la Ley de Enjuiciamiento Criminal.pdf",
+                "Ley Orgánica 6-1984, de 24 de mayo, reguladora del procedimiento de “Habeas Corpus”.pdf",
+                "Ley Orgánica 5-1995, de 22 de mayo, del Tribunal del Jurado..pdf",
+                "Ley 50-1981, de 30 de diciembre, por la que se regula el Estatuto Orgánico del Ministerio Fiscal..pdf"
+            ]
+        },
+        {
+            "number": 22,
+            "title": "Tema 22. La Ley 4/2015, de 27 de abril, del Estatuto de la víctima del delito",
+            "documents": [
+                "Ley 4-2015, de 27 de abril, del Estatuto de la víctima del delito.pdf",
+                "Real Decreto 1109-2015, de 11 de diciembre, por el que se desarrolla la Ley 4-2015, de 27 de abril, del Estatuto de la víctima del delito,.pdf"
+            ]
+        },
+        {
+            "number": 23,
+            "title": "Tema 23. Políticas de igualdad, protección y no discriminación en la AGE",
+            "documents": [
+                "Ley Orgánica 1-2004, de 28 de diciembre, de Medidas de Protección Integral contra la Violencia de Género.pdf",
+                "Ley Orgánica 3-2007, de 22 de marzo, para la igualdad efectiva de mujeres y hombres.pdf",
+                "Instrucción 4-2019, de la Secretaria de Estado de Seguridad, por la que se establece un nuevo protocolo para la valoración policial del nivel de riesgo de violencia de género (Ley Orgánica 1-2004), la gestión de la seguridad de las víctimas y seguimiento de los casos a través del sistema de seguimiento integral de los casos de violencia de género (Sistema VIOGÉN).pdf",
+                "Real Decreto 752-2022, de 13 de septiembre, por el que se establecen las funciones, el régimen de funcionamiento.pdf",
+                "Ley 4-2023, de 28 de febrero, para la igualdad real y efectiva de las personas trans y para la garantía de los derechos de las personas LGTBI..pdf",
+                "Ley Orgánica 10-2022, de 6 de septiembre, de garantía integral de la libertad sexual..pdf",
+                "Ley 39-2006, de 14 de diciembre, de Promoción de la Autonomía Personal y Atención a las personas en situación de dependencia.pdf",
+                "Ley 15-2022, de 12 de julio, integral para la igualdad de trato y la no discriminación..pdf"
+            ]
+        },
+        {
+            "number": 24,
+            "title": "Tema 24. Introducción a la Prevención de Riesgos Laborales",
+            "documents": [
+                "Ley 31-1995, de 8 de noviembre, de Prevención de Riesgos Laborales.pdf",
+                "Real Decreto 39-1997, de 17 de enero, por el que se aprueba el Reglamento de los Servicios de Prevención..pdf",
+                "Directiva del Consejo, de 12 de junio de 1989, relativa a la aplicación de medidas para promover.pdf",
+                "Real Decreto 2-2006, de 16 de enero, por el que se establecen normas sobre prevención de riesgos laborales.pdf",
+                "Real Decreto 67-2010, de 29 de enero, de adaptación de la legislación de Prevención de Riesgos Laborales a la Administración General del Estado.pdf",
+                "Real Decreto Legislativo 8-2015, de 30 de octubre, por el que se aprueba el texto refundido de la Ley General de la Seguridad Social..pdf"
+            ]
+        },
+        {
+            "number": 25,
+            "title": "Tema 25. Marco normativo básico en prevención de riesgos laborales",
+            "documents": [
+                "Ley 31-1995, de 8 de noviembre, de Prevención de Riesgos Laborales.pdf",
+                "Real Decreto 67-2010, de 29 de enero, de adaptación de la legislación de Prevención de Riesgos Laborales a la Administración General del Estado.pdf",
+                "Real Decreto Legislativo 8-2015, de 30 de octubre, por el que se aprueba el texto refundido de la Ley General de la Seguridad Social..pdf"
+            ]
+        },
+        {
+            "number": 26,
+            "title": "Tema 26. La protección de datos de carácter personal",
+            "documents": [
+                "Ley Orgánica 3-2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales.pdf",
+                "Ley Orgánica 7-2021, de 26 de mayo, de protección de datos personales tratados para fines de prevención, detección, investigación y.pdf",
+                "Real Decreto 389-2021, de 1 de junio, por el que se aprueba el Estatuto de la Agencia Española de Protección de Datos..pdf"
+            ]
+        },
+        {
+            "number": 27,
+            "title": "Tema 27. Derechos Humanos",
+            "documents": [
+                "Instrumento de Ratificación de España del Pacto Internacional de Derechos Civiles y Políticos, hecho en Nueva York el 19 de diciembre de 1966..pdf",
+                "Carta de los Derechos Fundamentales de la UE.pdf",
+                "Instrumento de Ratificación de España del Pacto Internacional de Derechos Civiles y Políticos, hecho en Nueva York el 19 de diciembre de 1966..pdf",
+                "Instrumento de Ratificación de España del Pacto Internacional de Derechos Civiles y Políticos, hecho en Nueva York el 19 de diciembre de 1966..pdf",
+                "Instrumento de ratificación de la Convención contra la tortura y otros tratos o penas crueles, inhumanos o degradantes,.pdf"
+            ]
+        },
+        {
+            "number": 30,
+            "title": "Tema 30. Principios éticos de la sociedad actual",
+            "documents": [
+                "PROTOCOLO DE ACTUACIÓN DELITOS DE ODIO PARA FFCCSS (rev. normativa junio 2023).pdf"
+            ]
+        },
+        {
+            "number": 42,
+            "title": "Tema 42. Origen de las armas de fuego",
+            "documents": [
+                "Real Decreto 137-1993, de 29 de enero, por el que se aprueba el Reglamento de Armas..pdf"
+            ]
+        },
+        {
+            "number": 43,
+            "title": "Tema 43. El vehículo prioritario",
+            "documents": [
+                "Real Decreto 1428-2003, de 21 de noviembre, por el que se aprueba el Reglamento General de Circulación para la aplicación.pdf",
+                "Real Decreto 818-2009, de 8 de mayo, por el que se aprueba el Reglamento General de Conductores..pdf"
+            ]
+        },
+        {
+            "number": 44,
+            "title": "Tema 44. La Seguridad en la Conducción de Vehículos Prioritarios",
+            "documents": [
+                "Real Decreto 2822-1998, de 23 de diciembre, por el que se aprueba el Reglamento General de Vehículos..pdf",
+                "Orden INT-2573-2015, de 30 de noviembre, por la que se determinan las especificaciones técnicas que deben reunir.pdf"
+            ]
+        },
+        {
+            "number": 45,
+            "title": "Tema 45. Prevención de Riesgos Laborales en Seguridad Vial",
+            "documents": [
+                "Real Decreto Legislativo 6-2015, de 30 de octubre, por el que se aprueba el texto.pdf",
+                "Real Decreto Legislativo 8-2015, de 30 de octubre, por el que se aprueba el texto refundido de la Ley General de la Seguridad Social..pdf"
+            ]
+        }
+    ]
+}

@@ -1,33 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const topicSchema = new mongoose.Schema({
-  force: {
-    type: String,
-    required: [true, 'The law enforcement force is required'],
-    enum: ['Policía Nacional', 'Guardia Civil'],
-    trim: true
+const topicSchema = new mongoose.Schema(
+  {
+    number: {
+      type: Number,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    force: {
+      type: String,
+      required: true,
+      enum: ["policia_nacional", "guardia_civil"],
+    },
+    block: {
+      type: String,
+      trim: true,
+    },
+    documents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Document",
+      },
+    ],
   },
-  topicTitle: {
-    type: String,
-    required: [true, 'The main topic title is required'],
-    trim: true
-  },
-  subtopicTitle: {
-    type: String,
-    required: [true, 'The subtopic title is required'],
-    trim: true
-  },
-  callYear: {
-    type: String,
-    required: [true, 'The call/convocatoria year is required'],
-    trim: true
-  },
-  textContent: {
-    type: String,
-    required: [true, 'The actual text content of the topic is required']
-  }
-}, {
-  timestamps: true 
-});
+  { timestamps: true },
+);
 
-module.exports = mongoose.model('Topic', topicSchema);
+module.exports = mongoose.model("Topic", topicSchema);
