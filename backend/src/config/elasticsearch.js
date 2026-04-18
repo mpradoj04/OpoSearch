@@ -10,7 +10,7 @@ const client = new Client({
         username: process.env.ELASTIC_USER,
         password: process.env.ELASTIC_PASSWORD
     },
-    ssl: {
+    tls: {
         ca: fs.readFileSync(caCertPath),
         rejectUnauthorized: false
     }

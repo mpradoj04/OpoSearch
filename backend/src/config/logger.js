@@ -10,7 +10,7 @@ const logger = createLogger({
     ),
     defaultMeta: { service: 'oposearch-backend' },
     transports: [
-        new transporsts.Console({
+        new transports.Console({
             format: format.combine(
                 format.colorize(),
                 format.simple()
