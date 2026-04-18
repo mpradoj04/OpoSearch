@@ -1,7 +1,7 @@
 const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
 
-const searchDocuments = async (queryText, force) => {
+const searchDocuments = async (queryText, force, page = 1, limit = 10) => {
   try {
     const queryOpts = {
       bool: {
@@ -22,8 +22,12 @@ const searchDocuments = async (queryText, force) => {
       };
     }
 
+    const from = (page - 1) * limit;
+
     const response = await client.search({
       index: "docs_oposearch",
+      from: from,
+      size: limit,
       body: {
         query: queryOpts,
         _source: {
@@ -38,8 +42,14 @@ const searchDocuments = async (queryText, force) => {
       ...hit._source,
     }));
 
+    const totalVal =
+      typeof response.hits.total === "number"
+        ? response.hits.total
+        : response.hits.total.value;
+
     return {
-      total: response.hits.total.value,
+      total: totalVal,
+      totalPages: Math.ceil(totalVal / limit),
       documents: hits,
     };
   } catch (error) {
