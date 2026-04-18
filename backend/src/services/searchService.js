@@ -1,17 +1,31 @@
 const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
 
-const searchDocuments = async (queryText) => {
+const searchDocuments = async (queryText, force) => {
   try {
-    const response = await client.search({
-      index: "docs_oposearch",
-      body: {
-        query: {
+    const queryOpts = {
+      bool: {
+        must: {
           multi_match: {
             query: queryText,
             fields: ["name^2", "text"],
           },
         },
+      },
+    };
+
+    if (force) {
+      queryOpts.bool.filter = {
+        term: {
+          forces: force,
+        },
+      };
+    }
+
+    const response = await client.search({
+      index: "docs_oposearch",
+      body: {
+        query: queryOpts,
         _source: {
           excludes: ["text"],
         },
