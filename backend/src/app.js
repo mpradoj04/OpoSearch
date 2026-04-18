@@ -9,6 +9,7 @@ const {
   deleteIndex,
 } = require("./services/indexService");
 const userRoutes = require("./routes/userRoutes");
+const searchRoutes = require("./routes/searchRoutes");
 const connectDB = require("./config/db");
 const { isAuthenticated, isAdmin } = require("./middlewares/AuthMiddleware");
 
@@ -22,6 +23,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/users", userRoutes);
+app.use("/search", searchRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 OpoSearch API funcionando");
