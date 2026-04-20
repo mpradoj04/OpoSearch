@@ -5,7 +5,7 @@ const path = require('path');
 const caCertPath = process.env.ELASTIC_CA_CERT || path.join(__dirname, '../../certs/ca/ca.crt');
 
 const client = new Client({
-    node: process.env.ELASTIC_HOST || 'https://es01:9200',
+    node: process.env.ELASTIC_HOSTS || 'https://es01:9200',
     auth: {
         username: process.env.ELASTIC_USER,
         password: process.env.ELASTIC_PASSWORD
