@@ -2,7 +2,7 @@ const searchService = require("../services/searchService");
 
 const search = async (req, res) => {
   try {
-    const { q, force, topic, page = 1, limit = 10 } = req.query;
+    const { q, force, topic, page = 1, limit = 10, sort = "relevance" } = req.query;
 
     if (!q && !force && !topic) {
       return res.status(400).json({
@@ -43,8 +43,14 @@ const search = async (req, res) => {
       });
     }
 
+    if (!["relevance", "name_asc", "name_desc"].includes(sort)) {
+      return res.status(400).json({
+        error: "The 'sort' parameter must be: relevance, name_asc, name_desc.",
+      });
+    }
+
     const { total, documents, totalPages } =
-      await searchService.searchDocuments(q, force, topic, pageNum, limitNum);
+      await searchService.searchDocuments(q, force, topic, pageNum, limitNum, sort);
 
     return res.status(200).json({
       totalResultados: total,

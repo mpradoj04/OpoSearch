@@ -1,7 +1,7 @@
 const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
 
-const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) => {
+const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, sort = "relevance") => {
   try {
     const filters = [];
 
@@ -24,6 +24,14 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) =>
         },
       });
     }
+
+    const SORT_OPTIONS = {
+      relevance: [{ _score: "desc" }],
+      name_asc:  [{ "name.keyword": "asc" }],
+      name_desc: [{ "name.keyword": "desc" }],
+    };
+
+    const sortQuery = SORT_OPTIONS[sort] || SORT_OPTIONS.relevance;
 
     const queryOpts = {
       bool: {
@@ -50,6 +58,7 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) =>
       size: limit,
       body: {
         query: queryOpts,
+        sort: sortQuery,
         _source: {
           excludes: ["text"],
         },

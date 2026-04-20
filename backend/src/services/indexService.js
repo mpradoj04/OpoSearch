@@ -14,7 +14,13 @@ const initIndex = async () => {
         body: {
           mappings: {
             properties: {
-              name: { type: "text", analyzer: "spanish" },
+              name: {
+                type: "text",
+                analyzer: "spanish",
+                fields: {
+                  keyword: { type: "keyword" }
+                }
+              },
               forces: { type: "keyword" },
               topics: {
                 type: "nested",
