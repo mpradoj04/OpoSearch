@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node backend/src/app.js",
-    "dev": "node --watch backend/src/app.js"
+    "dev": "node --watch backend/src/app.js",
+    "seed": "node backend/src/database/seed.js"
   },
   "keywords": [],
   "author": "",
