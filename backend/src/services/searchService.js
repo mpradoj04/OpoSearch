@@ -53,6 +53,22 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) =>
         _source: {
           excludes: ["text"],
         },
+        highlight: {
+          fields: {
+            text: {
+              fragment_size: 200,       
+              number_of_fragments: 3,   
+            },
+            name: {
+              number_of_fragments: 0,   
+            },
+            topicTitles: {
+              number_of_fragments: 0,
+            },
+          },
+          pre_tags: ["<mark>"],         
+          post_tags: ["</mark>"],       
+        },
       },
     });
 
@@ -60,6 +76,7 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) =>
       id: hit._id,
       score: hit._score,
       ...hit._source,
+      highlights: hit.highlight || {},
     }));
 
     const totalVal =
