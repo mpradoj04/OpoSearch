@@ -1,26 +1,46 @@
 const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
 
-const searchDocuments = async (queryText, force, page = 1, limit = 10) => {
+const searchDocuments = async (queryText, force, topic, page = 1, limit = 10) => {
   try {
-    const queryOpts = {
-      bool: {
-        must: {
-          multi_match: {
-            query: queryText,
-            fields: ["name^2", "text"],
+    const filters = [];
+
+    if (force) {
+      filters.push({ term: { forces: force } });
+    }
+
+    if (topic) {
+      filters.push({
+        nested: {
+          path: "topics",
+          query: {
+            bool: {
+              must: [
+                { term: { "topics.number": parseInt(topic, 10) } },
+                ...(force ? [{ term: { "topics.force": force } }] : []),
+              ],
+            },
           },
         },
+      });
+    }
+
+    const queryOpts = {
+      bool: {
+        ...(queryText
+          ? {
+              must: {
+                multi_match: {
+                  query: queryText,
+                  fields: ["name^3", "text", "topicTitles^2"],
+                },
+              },
+            }
+          : { must: { match_all: {} } }),
+        ...(filters.length > 0 && { filter: filters }),
       },
     };
 
-    if (force) {
-      queryOpts.bool.filter = {
-        term: {
-          forces: force,
-        },
-      };
-    }
 
     const from = (page - 1) * limit;
 

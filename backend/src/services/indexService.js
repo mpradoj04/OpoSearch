@@ -16,7 +16,15 @@ const initIndex = async () => {
             properties: {
               name: { type: "text", analyzer: "spanish" },
               forces: { type: "keyword" },
-              topics: { type: "keyword" },
+              topics: {
+                type: "nested",
+                properties: {
+                  force:   { type: "keyword" },
+                  number:  { type: "integer" },
+                  title:   { type: "text", analyzer: "spanish" },
+                }
+              },
+              topicTitles: { type: "text", analyzer: "spanish" },
               titulos: { type: "text", analyzer: "spanish" },
               capitulos: { type: "text", analyzer: "spanish" },
               articulos: { type: "text", analyzer: "spanish" },
@@ -64,9 +72,12 @@ const indexDocumentsFromMongo = async () => {
       const payload = {
         name: doc.name,
         forces: doc.forces || [],
-        topics: (doc.topics || []).map(
-          (t) => `${t.force} - ${t.number}: ${t.title}`,
-        ),
+        topics: (doc.topics || []).map(t => ({
+          force: t.force,
+          number: t.number,
+          title: t.title,
+        })),
+        topicTitles: (doc.topics || []).map(t => t.title),
         text: doc.text,
       };
       return [action, payload];

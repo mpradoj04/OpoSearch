@@ -2,9 +2,12 @@ const searchService = require("../services/searchService");
 
 const search = async (req, res) => {
   try {
-    const { q, force, page = 1, limit = 10 } = req.query;
-    if (!q) {
-      return res.status(400).json({ error: "The 'q' parameter is required." });
+    const { q, force, topic, page = 1, limit = 10 } = req.query;
+
+    if (!q && !force && !topic) {
+      return res.status(400).json({
+        error: "At least one search parameter is required: 'q', 'force' or 'topic'.",
+      });
     }
 
     const pageNum = parseInt(page, 10);
@@ -34,8 +37,14 @@ const search = async (req, res) => {
       });
     }
 
+    if (topic && isNaN(parseInt(topic, 10))) {
+      return res.status(400).json({
+        error: "The 'topic' parameter must be a number.",
+      });
+    }
+
     const { total, documents, totalPages } =
-      await searchService.searchDocuments(q, force, pageNum, limitNum);
+      await searchService.searchDocuments(q, force, topic, pageNum, limitNum);
 
     return res.status(200).json({
       totalResultados: total,
