@@ -13,6 +13,10 @@ const searchRoutes = require("./routes/SearchRoutes");
 const documentRoutes = require("./routes/DocumentRoutes");
 const connectDB = require("./config/db");
 const { isAuthenticated, isAdmin } = require("./middlewares/AuthMiddleware");
+const morgan = require("morgan");
+const logger = require("./config/logger");
+
+app.use(morgan("combined", { stream: logger.stream }));
 
 connectDB();
 

@@ -2,7 +2,7 @@ const { createLogger, format, transports } = require('winston');
 const path = require('path');
 
 const logger = createLogger({
-    level: 'info',
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'http',
     format: format.combine(
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.errors({ stack: true}),
@@ -25,6 +25,10 @@ const logger = createLogger({
         })
     ]
 });
+
+logger.stream = {
+    write: (message) => logger.http(message.trim()),
+};
 
 module.exports = logger;
 
