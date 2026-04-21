@@ -135,7 +135,36 @@ async function loadDocuments() {
   }
 }
 
+async function deleteDocument(documentId) {
+  try {
+    const doc = await Document.findById(documentId);
+    if (!doc) {
+      throw new Error("Document not found");
+    }
+    
+    await Topic.updateMany(
+      { "documents": documentId },
+      { $pull: { documents: documentId } }
+    );
+
+    await Document.findByIdAndDelete(documentId);
+
+    logger.info(`Document with ID ${documentId} deleted successfully.`, {
+      context: "LoadService",
+    });
+    return { success: true, message: "Document deleted successfully." };
+  } catch (error) {
+    logger.error(`Error deleting document with ID ${documentId}:`, {
+      context: "LoadService",
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+}
+
 module.exports = {
   loadDocuments,
   processFile,
+  deleteDocument,
 };

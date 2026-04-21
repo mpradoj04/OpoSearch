@@ -80,6 +80,28 @@ const uploadDocument = async (req, res) => {
 
 }
 
+const deleteDocument = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const documentId = id;
+
+        const result = await deleteDocument(documentId);
+
+        logger.info(`Document with ID ${documentId} deleted successfully.`, {
+            context: "DocumentController",
+        });
+        return res.status(200).json(result);
+    } catch (error) {
+        logger.error(`Error deleting document with ID ${id}: ${error.message}`, {
+            context: "DocumentController",
+            message: error.message,
+            stack: error.stack,
+        });
+        return res.status(500).json({ error: "An error occurred while deleting the document." });
+    }
+}
+
 module.exports = {
     uploadDocument,
+    deleteDocument,
 };

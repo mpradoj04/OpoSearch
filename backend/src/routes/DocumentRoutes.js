@@ -11,5 +11,6 @@ router.post(
   upload.single("file"),
   documentController.uploadDocument,
 );
+router.delete("/delete_document/:id",isAuthenticated,isAdmin,documentController.deleteDocument,);
 
 module.exports = router;
