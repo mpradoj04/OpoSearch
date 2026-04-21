@@ -4,6 +4,7 @@ const { processFile, deleteDocument: deleteDocumentService } = require("../servi
 const Topic = require("../models/Topic");
 const logger = require("../config/logger");
 const Document = require("../models/Document");
+const { indexSingleDocument } = require("../services/IndexService");
 
 const uploadDocument = async (req, res) => {
     try {
@@ -63,6 +64,12 @@ const uploadDocument = async (req, res) => {
             fileMetadata,
             topicDocs,
         );
+
+        const newDoc = await Document.findOne({ name: documentName });
+        if (!newDoc) {
+            throw new Error(`Document '${documentName}' was saved but could not be retrieved for indexing.`);
+        }
+        await indexSingleDocument(newDoc);
 
         fs.unlinkSync(req.file.path);
 

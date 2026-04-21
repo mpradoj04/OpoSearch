@@ -7,6 +7,14 @@ const INDEX_NAME = "docs_oposearch";
 const initIndex = async () => {
   const exists = await client.indices.exists({ index: INDEX_NAME });
 
+  if (exists) {
+    logger.info(`Index '${INDEX_NAME}' already exists.`, {
+      context: "ElasticsearchService",
+      index: INDEX_NAME,
+    });
+    return;
+  }
+
   try {
     if (!exists || !exists.body) {
       await client.indices.create({
@@ -157,8 +165,69 @@ const deleteIndex = async () => {
   }
 };
 
+const indexSingleDocument = async (doc) => {
+  try {
+    await initIndex();
+    await client.index({
+      index: INDEX_NAME,
+      id: doc._id.toString(),
+      refresh: true,
+      body: {
+        name: doc.name,
+        forces: doc.forces || [],
+        topics: (doc.topics || []).map(t => ({
+          force: t.force,
+          number: t.number,
+          title: t.title,
+        })),
+        topicTitles: (doc.topics || []).map(t => t.title),
+        text: doc.text,
+      },
+    });
+    logger.info(`Document '${doc.name}' indexed in Elasticsearch.`, {
+      context: "ElasticsearchService",
+    });
+  } catch (error) {
+    logger.error(`Error indexing document '${doc.name}': ${error.message}`, {
+      context: "ElasticsearchService",
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+};
+
+const deleteSingleDocumentFromIndex = async (documentId) => {
+  try {
+    await client.delete({
+      index: INDEX_NAME,
+      id: documentId.toString(),
+      refresh: true,
+    });
+
+    logger.info(`Document '${documentId}' deleted from Elasticsearch.`, {
+      context: "ElasticsearchService",
+    });
+  } catch (error) {
+    if (error.meta?.statusCode === 404) {
+      logger.warn(`Document '${documentId}' was not found in Elasticsearch index.`, {
+        context: "ElasticsearchService",
+      });
+      return;
+    }
+    logger.error(`Error deleting document '${documentId}' from Elasticsearch: ${error.message}`, {
+      context: "ElasticsearchService",
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+}
+
 module.exports = {
   initIndex,
   indexDocumentsFromMongo,
   deleteIndex,
+  indexSingleDocument,
+  deleteSingleDocumentFromIndex,
 };

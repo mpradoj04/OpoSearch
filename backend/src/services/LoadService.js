@@ -5,6 +5,7 @@ const pdfParse = require("pdf-parse");
 const Document = require("../models/Document");
 const Topic = require("../models/Topic");
 const logger = require("../config/logger");
+const { deleteSingleDocumentFromIndex } = require("./indexService");
 
 const FOLDER_MAP = {
   guardia_civil: "Guardia Civil",
@@ -148,7 +149,8 @@ async function deleteDocument(documentId) {
       { $pull: { documents: documentId } }
     );
 
-    await Document.findByIdAndDelete(documentId);
+    await Document.findOneAndDelete({ _id: documentId });
+    await deleteSingleDocumentFromIndex(documentId);
 
     logger.info(`Document with ID ${documentId} deleted successfully.`, {
       context: "LoadService",
