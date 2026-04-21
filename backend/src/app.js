@@ -3,13 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3000;
-const { loadDocuments } = require("./services/loadService");
+const { loadDocuments } = require("./services/LoadService");
 const {
   indexDocumentsFromMongo,
   deleteIndex,
-} = require("./services/indexService");
-const userRoutes = require("./routes/userRoutes");
-const searchRoutes = require("./routes/searchRoutes");
+} = require("./services/IndexService");
+const userRoutes = require("./routes/UserRoutes");
+const searchRoutes = require("./routes/SearchRoutes");
+const documentRoutes = require("./routes/DocumentRoutes");
 const connectDB = require("./config/db");
 const { isAuthenticated, isAdmin } = require("./middlewares/AuthMiddleware");
 
@@ -24,6 +25,7 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/search", searchRoutes);
+app.use("/documents", documentRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 OpoSearch API funcionando");
