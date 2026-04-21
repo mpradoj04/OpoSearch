@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const pdfParse = require("pdf-parse");
 const Document = require("../models/Document");
 const Topic = require("../models/Topic");
+const logger = require("../config/logger");
 
 const FOLDER_MAP = {
   guardia_civil: "Guardia Civil",

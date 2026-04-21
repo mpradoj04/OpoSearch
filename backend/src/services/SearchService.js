@@ -63,6 +63,7 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
           excludes: ["text"],
         },
         highlight: {
+          max_analyzed_offset: 999999,
           fields: {
             text: {
               fragment_size: 200,       

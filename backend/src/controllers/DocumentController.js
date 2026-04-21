@@ -1,8 +1,9 @@
 const path = require("path");
 const fs = require("fs");
-const { processFile } = require("../services/loadService");
+const { processFile, deleteDocument: deleteDocumentService } = require("../services/loadService");
 const Topic = require("../models/Topic");
 const logger = require("../config/logger");
+const Document = require("../models/Document");
 
 const uploadDocument = async (req, res) => {
     try {
@@ -85,13 +86,17 @@ const deleteDocument = async (req, res) => {
         const { id } = req.params;
         const documentId = id;
 
-        const result = await deleteDocument(documentId);
+        const result = await deleteDocumentService(documentId);
 
         logger.info(`Document with ID ${documentId} deleted successfully.`, {
             context: "DocumentController",
         });
         return res.status(200).json(result);
     } catch (error) {
+        const id = req.params.id;
+        if (error.message.includes("not found")) {
+            return res.status(404).json({ error: error.message });
+        }
         logger.error(`Error deleting document with ID ${id}: ${error.message}`, {
             context: "DocumentController",
             message: error.message,

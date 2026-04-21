@@ -36,3 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 backend/logs
+
+#local uploads
+uploads/*
+!uploads/.gitkeep
