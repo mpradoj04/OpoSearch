@@ -16,7 +16,12 @@ const { isAuthenticated, isAdmin } = require("./middlewares/AuthMiddleware");
 const morgan = require("morgan");
 const logger = require("./config/logger");
 
-app.use(morgan("combined", { stream: logger.stream }));
+app.use(
+  morgan(
+    ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - :response-time ms',
+    { stream: logger.stream },
+  ),
+);
 
 connectDB();
 
