@@ -1,119 +1,215 @@
 const path = require("path");
 const fs = require("fs");
-const { processFile, deleteDocument: deleteDocumentService } = require("../services/loadService");
+const {
+  processFile,
+  deleteDocument: deleteDocumentService,
+  updateDocument: updateDocumentService,
+} = require("../services/loadService");
 const Topic = require("../models/Topic");
 const logger = require("../config/logger");
 const Document = require("../models/Document");
 const { indexSingleDocument } = require("../services/IndexService");
 
 const uploadDocument = async (req, res) => {
-    try {
-        if (!req.file) {
-            logger.warn("Upload attempted without a PDF file.", {
-                context: "DocumentController",
-            });
-            return res.status(400).json({ error: "A PDF file is required." });
-        }
-        
-        const { force, topics } = req.body;
-
-        const documentName = req.file.originalname.replace(".pdf", "");
-        const existing = await Document.findOne({ name: documentName });
-        if (existing) {
-            fs.unlinkSync(req.file.path);
-            logger.warn(`Duplicate document upload attempted: '${documentName}'.`, {
-                context: "DocumentController",
-            });
-            return res.status(409).json({ error: `A document named '${documentName}' already exists.` });
-        }
-
-        if (!force || !["guardia_civil", "policia_nacional", "ambos"].includes(force)) {
-            logger.warn(`Invalid 'force' value for document '${documentName}': ${force}`, {
-                context: "DocumentController",
-            });
-            return res.status(400).json({
-                error: "The 'force' field is required and must be one of: guardia_civil, policia_nacional, ambos.",
-            });
-        }
-
-        let parsedTopics = [];
-        if (topics) {
-            try {
-                parsedTopics = JSON.parse(topics);
-            } catch {
-                logger.warn(`Invalid 'topics' value for document '${documentName}': ${topics}`, {
-                    context: "DocumentController",
-                });
-                return res.status(400).json({ error: "The 'topics' field must be a valid JSON array." });
-            }
-        }
-
-        const topicDocs = { guardia_civil: {}, policia_nacional: {} };
-        for (const t of parsedTopics) {
-            const topicDoc = await Topic.findOne({ force: t.force, number: t.number });
-            if (topicDoc) {
-                topicDocs[t.force][t.number] = topicDoc;
-            }
-        }
-
-        const fileMetadata = { topics: parsedTopics };
-        await processFile(
-            req.file.path,
-            req.file.originalname,
-            force,
-            fileMetadata,
-            topicDocs,
-        );
-
-        const newDoc = await Document.findOne({ name: documentName });
-        if (!newDoc) {
-            throw new Error(`Document '${documentName}' was saved but could not be retrieved for indexing.`);
-        }
-        await indexSingleDocument(newDoc);
-
-        fs.unlinkSync(req.file.path);
-
-        logger.info(`Document '${req.file.originalname}' uploaded successfully.`, {
-            context: "DocumentController",
-        });
-        return res.status(200).json({ message: "Document processed successfully." });
-    } catch (error) {
-        logger.error(`Error uploading document '${req.file.originalname}': ${error.message}`, {
-            context: "DocumentController",
-            message: error.message,
-            stack: error.stack,
-            });
-        return res.status(500).json({ error: "An error occurred while processing the document." });
+  try {
+    if (!req.file) {
+      logger.warn("Upload attempted without a PDF file.", {
+        context: "DocumentController",
+      });
+      return res.status(400).json({ error: "A PDF file is required." });
     }
 
-}
+    const { force, topics } = req.body;
+
+    const documentName = req.file.originalname.replace(".pdf", "");
+    const existing = await Document.findOne({ name: documentName });
+    if (existing) {
+      fs.unlinkSync(req.file.path);
+      logger.warn(`Duplicate document upload attempted: '${documentName}'.`, {
+        context: "DocumentController",
+      });
+      return res
+        .status(409)
+        .json({ error: `A document named '${documentName}' already exists.` });
+    }
+
+    if (
+      !force ||
+      !["guardia_civil", "policia_nacional", "ambos"].includes(force)
+    ) {
+      logger.warn(
+        `Invalid 'force' value for document '${documentName}': ${force}`,
+        {
+          context: "DocumentController",
+        },
+      );
+      return res.status(400).json({
+        error:
+          "The 'force' field is required and must be one of: guardia_civil, policia_nacional, ambos.",
+      });
+    }
+
+    let parsedTopics = [];
+    if (topics) {
+      try {
+        parsedTopics = JSON.parse(topics);
+      } catch {
+        logger.warn(
+          `Invalid 'topics' value for document '${documentName}': ${topics}`,
+          {
+            context: "DocumentController",
+          },
+        );
+        return res
+          .status(400)
+          .json({ error: "The 'topics' field must be a valid JSON array." });
+      }
+    }
+
+    const topicDocs = { guardia_civil: {}, policia_nacional: {} };
+    for (const t of parsedTopics) {
+      const topicDoc = await Topic.findOne({
+        force: t.force,
+        number: t.number,
+      });
+      if (topicDoc) {
+        topicDocs[t.force][t.number] = topicDoc;
+      }
+    }
+
+    const fileMetadata = { topics: parsedTopics };
+    await processFile(
+      req.file.path,
+      req.file.originalname,
+      force,
+      fileMetadata,
+      topicDocs,
+    );
+
+    const newDoc = await Document.findOne({ name: documentName });
+    if (!newDoc) {
+      throw new Error(
+        `Document '${documentName}' was saved but could not be retrieved for indexing.`,
+      );
+    }
+    await indexSingleDocument(newDoc);
+
+    fs.unlinkSync(req.file.path);
+
+    logger.info(`Document '${req.file.originalname}' uploaded successfully.`, {
+      context: "DocumentController",
+    });
+    return res
+      .status(200)
+      .json({ message: "Document processed successfully." });
+  } catch (error) {
+    logger.error(
+      `Error uploading document '${req.file.originalname}': ${error.message}`,
+      {
+        context: "DocumentController",
+        message: error.message,
+        stack: error.stack,
+      },
+    );
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the document." });
+  }
+};
 
 const deleteDocument = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const documentId = id;
+  try {
+    const { id } = req.params;
+    const documentId = id;
 
-        const result = await deleteDocumentService(documentId);
+    const result = await deleteDocumentService(documentId);
 
-        logger.info(`Document with ID ${documentId} deleted successfully.`, {
-            context: "DocumentController",
-        });
-        return res.status(200).json(result);
-    } catch (error) {
-        const id = req.params.id;
-        if (error.message.includes("not found")) {
-            return res.status(404).json({ error: error.message });
-        }
-        logger.error(`Error deleting document with ID ${id}: ${error.message}`, {
-            context: "DocumentController",
-            message: error.message,
-            stack: error.stack,
-        });
-        return res.status(500).json({ error: "An error occurred while deleting the document." });
+    logger.info(`Document with ID ${documentId} deleted successfully.`, {
+      context: "DocumentController",
+    });
+    return res.status(200).json(result);
+  } catch (error) {
+    const id = req.params.id;
+    if (error.message.includes("not found")) {
+      return res.status(404).json({ error: error.message });
     }
-}
+    logger.error(`Error deleting document with ID ${id}: ${error.message}`, {
+      context: "DocumentController",
+      message: error.message,
+      stack: error.stack,
+    });
+    return res
+      .status(500)
+      .json({ error: "An error occurred while deleting the document." });
+  }
+};
+
+const updateDocument = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, forces, topics } = req.body;
+
+    if (!name && !forces && !topics) {
+      return res.status(400).json({
+        error: "At least one field must be provided: name, forces, or topics.",
+      });
+    }
+
+    const validForces = ["policia_nacional", "guardia_civil"];
+    if (forces) {
+      if (
+        !Array.isArray(forces) ||
+        forces.some((f) => !validForces.includes(f))
+      ) {
+        return res.status(400).json({
+          error:
+            "The 'forces' field must be an array containing: policia_nacional, guardia_civil.",
+        });
+      }
+    }
+
+    let parsedTopics;
+    if (topics) {
+      try {
+        parsedTopics = typeof topics === "string" ? JSON.parse(topics) : topics;
+      } catch {
+        return res
+          .status(400)
+          .json({ error: "The 'topics' field must be a valid JSON array." });
+      }
+    }
+
+    const result = await updateDocumentService(id, {
+      name,
+      forces,
+      topics: parsedTopics,
+    });
+
+    logger.info(`Document with ID ${id} updated successfully.`, {
+      context: "DocumentController",
+    });
+    return res.status(200).json(result);
+  } catch (error) {
+    const { id } = req.params;
+    if (error.message.includes("not found")) {
+      return res.status(404).json({ error: error.message });
+    }
+    if (error.message.includes("already exists")) {
+      return res.status(409).json({ error: error.message });
+    }
+    logger.error(`Error updating document with ID ${id}: ${error.message}`, {
+      context: "DocumentController",
+      message: error.message,
+      stack: error.stack,
+    });
+    return res
+      .status(500)
+      .json({ error: "An error occurred while updating the document." });
+  }
+};
 
 module.exports = {
-    uploadDocument,
-    deleteDocument,
+  uploadDocument,
+  deleteDocument,
+  updateDocument,
 };

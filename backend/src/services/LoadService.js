@@ -143,10 +143,10 @@ async function deleteDocument(documentId) {
     if (!doc) {
       throw new Error("Document not found");
     }
-    
+
     await Topic.updateMany(
-      { "documents": documentId },
-      { $pull: { documents: documentId } }
+      { documents: documentId },
+      { $pull: { documents: documentId } },
     );
 
     await Document.findOneAndDelete({ _id: documentId });
@@ -166,8 +166,73 @@ async function deleteDocument(documentId) {
   }
 }
 
+async function updateDocument(documentId, updateData) {
+  try {
+    const doc = await Document.findById(documentId);
+    if (!doc) {
+      throw new Error("Document not found");
+    }
+
+    const { name, forces, topics } = updateData;
+
+    if (name && name !== doc.name) {
+      const existing = await Document.findOne({
+        name,
+        _id: { $ne: documentId },
+      });
+      if (existing) {
+        throw new Error(`A document named '${name}' already exists.`);
+      }
+      doc.name = name;
+    }
+
+    if (forces) {
+      doc.forces = forces;
+    }
+
+    if (topics) {
+      await Topic.updateMany(
+        { documents: documentId },
+        { $pull: { documents: documentId } },
+      );
+
+      doc.topics = topics;
+
+      for (const t of topics) {
+        const topicDoc = await Topic.findOne({
+          force: t.force,
+          number: t.number,
+        });
+        if (topicDoc && !topicDoc.documents.some((d) => d.toString() === documentId.toString())) {
+          topicDoc.documents.push(documentId);
+          await topicDoc.save();
+        }
+      }
+    }
+
+    await doc.save();
+
+    logger.info(`Document with ID ${documentId} updated successfully.`, {
+      context: "LoadService",
+    });
+    return {
+      success: true,
+      message: "Document updated successfully.",
+      document: doc,
+    };
+  } catch (error) {
+    logger.error(`Error updating document with ID ${documentId}:`, {
+      context: "LoadService",
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+}
+
 module.exports = {
   loadDocuments,
   processFile,
   deleteDocument,
+  updateDocument,
 };
