@@ -94,6 +94,15 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
         ? response.hits.total
         : response.hits.total.value;
 
+    logger.info("Search executed", {
+      context: "SearchService",
+      query: queryText || null,
+      force: force || null,
+      topic: topic || null,
+      totalResults: totalVal,
+      page
+    });
+
     return {
       total: totalVal,
       totalPages: Math.ceil(totalVal / limit),
@@ -101,7 +110,7 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
     };
   } catch (error) {
     logger.error(
-      `Error buscando documentos en Elasticsearch: ${error.message}`,
+      `Error searching documents in Elasticsearch: ${error.message}`,
     );
     throw error;
   }
