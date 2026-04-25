@@ -56,7 +56,7 @@ const refreshAccessToken = async (token) => {
     const newAccessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
     return newAccessToken;
   } catch (error) {
-    throw new Error("Invalid or expired refresh token");
+    throw new Error("Invalid or expired refresh token" + error.message, { cause: error });
   }
 };
 
