@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import "../styles/Login.css";
+import { Link } from "react-router-dom";
 
 export function Login() {
   const { login } = useAuth();
@@ -20,7 +22,7 @@ export function Login() {
   }
 
   return (
-    <>
+    <div className="login-page">
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -35,7 +37,11 @@ export function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Entrar</button>
+
+        <p className="login-footer">
+          ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+        </p>
       </form>
-    </>
+    </div>
   );
 }

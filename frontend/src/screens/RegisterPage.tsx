@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
+import "../styles/Register.css";
+import { Link } from "react-router-dom";
 
 export function Register() {
   const { register } = useAuth();
@@ -21,7 +23,7 @@ export function Register() {
   }
 
   return (
-    <>
+    <div className="register-page">
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -41,7 +43,11 @@ export function Register() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Registrarse</button>
+
+        <p className="register-footer">
+          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+        </p>
       </form>
-    </>
+    </div>
   );
 }
