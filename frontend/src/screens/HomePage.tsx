@@ -1,703 +1,851 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  searchDocuments,
+  fetchTopics,
+  type Force,
+  type SortOption,
+  type DocumentHit,
+  type TopicItem,
+} from "../services/SearchService";
 import { ForceBadge } from "../components/ForceBadge";
 import { TopicBadge } from "../components/TopicBadge";
 
-type Force = "policia_nacional" | "guardia_civil" | "";
-type SortOption = "relevance" | "name_asc" | "name_desc";
-
-interface MockTopic {
-  number: number;
-  title: string;
-  force: "policia_nacional" | "guardia_civil";
-}
+const FORCE_LABELS: Record<string, string> = {
+  policia_nacional: "Policía Nacional",
+  guardia_civil: "Guardia Civil",
+};
  
-interface MockDoc {
-  id: string;
-  name: string;
-  forces: string[];
-  topics: { number: number; title: string; force: string }[];
-  excerpt: string;
-  filePath: string;
-}
-
-/* ─── datos de maqueta ─── */
-const MOCK_TOPICS: MockTopic[] = [
-  { number: 1, title: "La Constitución Española de 1978",       force: "policia_nacional" },
-  { number: 2, title: "Derechos y libertades fundamentales",     force: "policia_nacional" },
-  { number: 3, title: "El poder judicial. El Ministerio Fiscal", force: "policia_nacional" },
-  { number: 4, title: "La organización territorial del Estado",  force: "policia_nacional" },
-  { number: 1, title: "El Estado. Concepto y elementos",         force: "guardia_civil" },
-  { number: 2, title: "La Corona. Funciones constitucionales",   force: "guardia_civil" },
-  { number: 3, title: "Las Cortes Generales",                    force: "guardia_civil" },
-];
+const SORT_LABELS: Record<SortOption, string> = {
+  relevance: "Más relevante",
+  name_asc: "Nombre A–Z",
+  name_desc: "Nombre Z–A",
+};
  
-const MOCK_DOCS: MockDoc[] = [
-  {
-    id: "1",
-    name: "Ley Orgánica 9/2015 de Régimen de Personal de la Policía Nacional",
-    forces: ["policia_nacional"],
-    topics: [{ number: 4, title: "Organización territorial", force: "policia_nacional" }],
-    excerpt:
-      "Esta ley regula el régimen de personal del Cuerpo Nacional de Policía, incluyendo el acceso, la promoción interna y el régimen disciplinario de sus miembros en el ejercicio de sus funciones.",
-    filePath: "/docs/pn/lo9-2015.pdf",
-  },
-  {
-    id: "2",
-    name: "Ley 29/2014 de Régimen del Personal de la Guardia Civil",
-    forces: ["guardia_civil"],
-    topics: [{ number: 2, title: "Estatuto del guardia civil", force: "guardia_civil" }],
-    excerpt:
-      "Establece el régimen jurídico del personal de la Guardia Civil, regulando la carrera militar, el estatuto del guardia civil y las situaciones administrativas derivadas de su condición.",
-    filePath: "/docs/gc/ley29-2014.pdf",
-  },
-  {
-    id: "3",
-    name: "Constitución Española — Título I: De los derechos y deberes fundamentales",
-    forces: ["policia_nacional", "guardia_civil"],
-    topics: [
-      { number: 1, title: "La Constitución Española de 1978", force: "policia_nacional" },
-      { number: 1, title: "El Estado. Concepto y elementos",   force: "guardia_civil" },
-    ],
-    excerpt:
-      "Los españoles son iguales ante la ley, sin que pueda prevalecer discriminación alguna por razón de nacimiento, raza, sexo, religión, opinión o cualquier otra condición o circunstancia personal o social.",
-    filePath: "/docs/comun/constitucion-titulo1.pdf",
-  },
-  {
-    id: "4",
-    name: "Real Decreto 864/1994 — Reglamento de los Cuerpos de Seguridad",
-    forces: ["policia_nacional"],
-    topics: [{ number: 3, title: "El poder judicial", force: "policia_nacional" }],
-    excerpt:
-      "Aprueba el reglamento de los Cuerpos y Fuerzas de Seguridad en materia de actuación policial, uso proporcional de la fuerza, detención y custodia de detenidos.",
-    filePath: "/docs/pn/rd864-1994.pdf",
-  },
-];
+const LIMIT = 10;
+
+function Highlight({ html }: { html: string }) {
+  return (
+    <span
+      className="excerpt"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
 
 export function HomePage() {
   const [inputValue, setInputValue] = useState("");
+  const [query, setQuery] = useState("");
   const [force, setForce] = useState<Force>("");
   const [topic, setTopic] = useState<number | "">("");
   const [sort, setSort] = useState<SortOption>("relevance");
+
+  const [documents, setDocuments] = useState<DocumentHit[]>([]);
+  const [total, setTotal] = useState<number | null>(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const visibleTopics = force
-    ? MOCK_TOPICS.filter((t) => t.force === force)
-    : MOCK_TOPICS;
+  const [topics, setTopics] = useState<TopicItem[]>([]);
+  const [topicsLoading, setTopicsLoading] = useState(false);
+ 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTopicsLoading(true);
+    setTopic("");
+    fetchTopics(force || undefined)
+      .then(setTopics)
+      .catch(() => setTopics([]))
+      .finally(() => setTopicsLoading(false));
+  }, [force]);
+
+  const doSearch = useCallback(
+    async (overridePage = 1) => {
+      if (!query && !force && !topic) return;
+      setLoading(true);
+      setError(null);
+      setHasSearched(true);
+      try {
+        const result = await searchDocuments({
+          q: query || undefined,
+          force: force || undefined,
+          topic: topic || undefined,
+          page: overridePage,
+          limit: LIMIT,
+          sort,
+        });
+        setDocuments(result.documentos);
+        setTotal(result.totalResultados);
+        setTotalPages(result.totalPaginas);
+        setPage(overridePage);
+      } catch (e: any) {
+        setError(e.message ?? "Error desconocido");
+        setDocuments([]);
+        setTotal(0);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [query, force, topic, sort]
+  );
+
+  useEffect(() => {
+    if (hasSearched) doSearch(1);
+  }, [force, topic, sort]);
 
   function handleSearch() {
-    if (inputValue.trim() || force || topic){
-      setHasSearched(true);
-    } 
+    const q = inputValue.trim();
+    setQuery(q);
   }
 
-  function handleForceChange(val: Force) {
-    setForce(val);
-    setTopic("");
+  useEffect(() => {
+    if (query || force || topic) doSearch(1);
+  }, [query]);
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") handleSearch();
+  }
+ 
+  function handleForceFilter(value: Force) {
+    setForce(value);
+  }
+ 
+  function handleTopicFilter(value: number | "") {
+    setTopic(value);
+  }
+
+  function getExcerpt(doc: DocumentHit): string {
+    if (doc.highlights?.text?.length) return doc.highlights.text[0];
+    if (doc.highlights?.name?.length) return doc.highlights.name[0];
+    return "";
   }
 
   return (
     <>
       <style>{`
-        /* ─── página ─── */
-        .hp-page {
-          width: 100%;
-          min-height: 100svh;
-          display: flex;
-          flex-direction: column;
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+ 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+        body {
+          font-family: 'Source Serif 4', Georgia, serif;
+          background: #f7f6f2;
+          color: #1a1a18;
+          min-height: 100vh;
         }
  
         /* ─── hero ─── */
-        .hp-hero {
-          padding: 64px 40px 56px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+        .hero {
+          background: #1a1a18;
+          padding: 3rem 2.5rem 2.5rem;
           position: relative;
+          overflow: hidden;
         }
  
-        .hp-hero::after {
+        .hero::before {
           content: '';
           position: absolute;
-          bottom: 0; left: 10%; right: 10%;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, var(--accent-border), transparent);
+          top: -80px; right: -80px;
+          width: 400px; height: 400px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.06);
+          pointer-events: none;
+        }
+        .hero::after {
+          content: '';
+          position: absolute;
+          top: 40px; right: 40px;
+          width: 200px; height: 200px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.06);
+          pointer-events: none;
         }
  
-        .hp-eyebrow {
-          font-family: var(--heading);
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: var(--gold);
-          margin-bottom: 20px;
+        .site-label {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 8px;
+          margin-bottom: 1.5rem;
         }
  
-        .hp-eyebrow::before,
-        .hp-eyebrow::after {
-          content: '';
-          width: 32px;
-          height: 1px;
-          background: var(--gold-dark);
+        .label-dot {
+          width: 7px; height: 7px;
+          border-radius: 50%;
+          background: #c0392b;
+          flex-shrink: 0;
         }
  
-        .hp-title {
-          font-family: var(--heading);
-          font-size: clamp(32px, 5vw, 56px);
-          font-weight: 700;
-          letter-spacing: 0.08em;
+        .label-text {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.2em;
           text-transform: uppercase;
-          line-height: 1;
-          margin: 0 0 6px;
-          background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: rgba(255,255,255,0.4);
         }
  
-        .hp-subtitle {
-          font-family: var(--heading);
-          font-size: clamp(13px, 2vw, 16px);
-          font-weight: 400;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          margin: 0 0 40px;
+        .hero-title {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(2.2rem, 5vw, 3.5rem);
+          font-weight: 900;
+          line-height: 1.05;
+          letter-spacing: -0.02em;
+          color: #fff;
+          margin-bottom: 0.5rem;
         }
  
-        .hp-desc {
-          font-family: var(--sans);
-          font-size: 16px;
-          color: var(--text);
+        .hero-title em {
+          font-style: italic;
+          color: #c0392b;
+        }
+ 
+        .hero-sub {
+          font-size: 15px;
+          font-weight: 300;
+          color: rgba(255,255,255,0.45);
+          margin-bottom: 2rem;
+          line-height: 1.6;
           max-width: 520px;
-          text-align: center;
-          line-height: 1.7;
-          margin-bottom: 44px;
         }
  
         /* ─── barra de búsqueda ─── */
-        .hp-search-wrap {
-          width: 100%;
-          max-width: 680px;
+        .search-wrap {
           position: relative;
+          max-width: 640px;
         }
  
-        .hp-search-input {
+        .search-input {
           width: 100%;
-          box-sizing: border-box;
-          height: 58px;
-          padding: 0 64px 0 24px;
-          font-family: var(--sans);
-          font-size: 17px;
+          height: 54px;
+          padding: 0 56px 0 20px;
+          font-family: 'Source Serif 4', serif;
+          font-size: 16px;
+          font-weight: 300;
           font-style: italic;
-          background: var(--navy-surface);
-          border: 1px solid var(--accent-border);
-          border-radius: 3px;
-          color: var(--text-h);
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 2px;
+          color: #fff;
           outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-          letter-spacing: 0.02em;
+          transition: border-color 0.15s, background 0.15s;
         }
  
-        .hp-search-input::placeholder {
-          color: var(--text-muted);
-          font-style: italic;
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-input:focus {
+          border-color: #c0392b;
+          background: rgba(255,255,255,0.1);
         }
  
-        .hp-search-input:focus {
-          border-color: var(--gold);
-          box-shadow: 0 0 0 3px rgba(201,168,76,0.1), var(--shadow);
-        }
- 
-        .hp-search-btn {
+        .search-btn {
           position: absolute;
           right: 0; top: 0;
-          width: 58px; height: 58px;
-          background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+          width: 54px; height: 54px;
+          background: #c0392b;
           border: none;
-          border-radius: 0 3px 3px 0;
+          border-radius: 0 2px 2px 0;
           cursor: pointer;
           display: flex; align-items: center; justify-content: center;
-          transition: opacity 0.15s;
+          transition: background 0.15s;
         }
  
-        .hp-search-btn:hover { opacity: 0.88; }
+        .search-btn:hover { background: #922b21; }
  
-        .hp-search-btn svg {
-          width: 20px; height: 20px;
-          stroke: var(--navy-deep);
+        .search-btn svg {
+          width: 18px; height: 18px;
+          stroke: white;
           fill: none;
-          stroke-width: 2.2;
+          stroke-width: 2;
           stroke-linecap: round;
         }
  
-        /* ─── stats ─── */
-        .hp-stats {
+        /* ─── stats strip ─── */
+        .stats-strip {
           display: flex;
-          justify-content: center;
           gap: 0;
-          margin-top: 40px;
-          border: 1px solid var(--border);
-          border-radius: 3px;
-          overflow: hidden;
-          background: var(--navy-surface);
+          background: #fff;
+          border-bottom: 1px solid #e8e6e0;
         }
  
-        .hp-stat {
-          padding: 14px 32px;
-          border-right: 1px solid var(--border);
+        .stat-item {
+          padding: 0.9rem 2rem;
+          border-right: 1px solid #e8e6e0;
           text-align: center;
         }
  
-        .hp-stat:last-child { border-right: none; }
+        .stat-item:last-child { border-right: none; }
  
-        .hp-stat-num {
+        .stat-num {
           display: block;
-          font-family: var(--heading);
+          font-family: 'Playfair Display', serif;
           font-size: 22px;
-          font-weight: 600;
-          color: var(--gold);
-          letter-spacing: 0.06em;
+          font-weight: 700;
+          color: #c0392b;
           line-height: 1;
         }
  
-        .hp-stat-lbl {
-          display: block;
-          font-family: var(--heading);
-          font-size: 9px;
-          letter-spacing: 0.22em;
+        .stat-lbl {
+          font-size: 10px;
+          letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: var(--text-muted);
-          margin-top: 4px;
+          color: #888;
+          display: block;
+          margin-top: 2px;
         }
  
         /* ─── layout principal ─── */
-        .hp-body {
+        .body-section {
           display: grid;
-          grid-template-columns: 260px 1fr;
-          flex: 1;
-          border-top: 1px solid var(--border);
-          margin-top: 48px;
+          grid-template-columns: 240px 1fr;
+          min-height: calc(100vh - 260px);
         }
  
         /* ─── sidebar ─── */
-        .hp-sidebar {
-          border-right: 1px solid var(--border);
-          padding: 32px 24px;
-          text-align: left;
-          background: rgba(13,21,38,0.4);
+        .sidebar {
+          background: #fff;
+          border-right: 1px solid #e8e6e0;
+          padding: 2rem 1.5rem;
         }
  
-        .hp-filter-group { margin-bottom: 28px; }
+        .filter-group { margin-bottom: 1.75rem; }
  
-        .hp-filter-label {
-          font-family: var(--heading);
-          font-size: 9px;
+        .filter-group-label {
+          font-size: 10px;
           font-weight: 600;
-          letter-spacing: 0.28em;
+          letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: var(--gold-dark);
+          color: #aaa;
           display: block;
-          margin-bottom: 12px;
-          padding-bottom: 8px;
-          border-bottom: 1px solid var(--border);
+          margin-bottom: 0.6rem;
         }
  
-        .hp-chip {
+        .filter-chip {
           display: flex;
           align-items: center;
           gap: 10px;
           width: 100%;
-          padding: 8px 12px;
+          padding: 7px 10px;
           margin-bottom: 3px;
           border-radius: 2px;
           border: 1px solid transparent;
           background: transparent;
-          font-family: var(--sans);
-          font-size: 14px;
-          color: var(--text);
+          font-family: 'Source Serif 4', serif;
+          font-size: 13.5px;
+          color: #333;
           cursor: pointer;
           text-align: left;
-          transition: all 0.15s;
-          letter-spacing: 0.01em;
-          line-height: 1.3;
+          transition: all 0.1s;
         }
  
-        .hp-chip:hover {
-          background: var(--accent-bg);
-          border-color: var(--accent-border);
-          color: var(--gold-light);
+        .filter-chip:hover { background: #f7f6f2; }
+ 
+        .filter-chip.active {
+          background: #fdf0f0;
+          border-color: #c0392b;
+          color: #c0392b;
         }
  
-        .hp-chip.active {
-          background: var(--accent-bg);
-          border-color: var(--gold);
-          color: var(--gold-light);
-        }
- 
-        .hp-chip-dot {
-          width: 5px; height: 5px;
-          border-radius: 50%;
-          background: var(--text-muted);
-          flex-shrink: 0;
-          transition: background 0.15s;
-        }
- 
-        .hp-chip.active .hp-chip-dot { background: var(--gold); }
- 
-        .hp-chip-icon {
+        .chip-icon {
           width: 22px; height: 22px;
           border-radius: 50%;
           display: flex; align-items: center; justify-content: center;
-          font-family: var(--heading);
-          font-size: 8px;
+          font-size: 9px;
           font-weight: 700;
-          letter-spacing: 0.05em;
+          letter-spacing: -0.05em;
           flex-shrink: 0;
           color: white;
         }
  
-        .hp-chip-icon-pn { background: #003a72; }
-        .hp-chip-icon-gc { background: #1a5c1a; }
+        .chip-icon-pn { background: #003A72; }
+        .chip-icon-gc { background: #1A5C1A; }
  
-        .hp-chip-num {
-          font-family: var(--heading);
-          font-size: 10px;
-          color: var(--text-muted);
+        .chip-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: #ccc;
+          flex-shrink: 0;
+          transition: background 0.1s;
+        }
+ 
+        .filter-chip.active .chip-dot { background: #c0392b; }
+ 
+        .filter-chip .chip-num {
+          font-size: 11px;
+          color: #aaa;
           margin-left: auto;
           flex-shrink: 0;
-          letter-spacing: 0.1em;
         }
  
-        .hp-chip.active .hp-chip-num { color: var(--gold-dark); }
+        .filter-chip.active .chip-num { color: #c0392b; }
  
-        .hp-chip-title {
-          flex: 1;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        .divider { height: 1px; background: #e8e6e0; margin: 1.5rem 0; }
+ 
+        .topics-loading {
+          font-size: 12px;
+          color: #aaa;
+          font-style: italic;
+          padding: 6px 10px;
         }
  
-        .hp-divider {
-          height: 1px;
-          background: var(--border);
-          margin: 20px 0;
-        }
+        /* ─── área de resultados ─── */
+        .results-area { padding: 2rem; background: #f7f6f2; }
  
-        /* ─── zona de resultados ─── */
-        .hp-results {
-          padding: 32px 40px;
-          text-align: left;
-        }
- 
-        .hp-results-header {
+        .results-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 24px;
-          padding-bottom: 16px;
-          border-bottom: 1px solid var(--border);
+          margin-bottom: 1.25rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e0ddd6;
         }
  
-        .hp-results-count {
-          font-family: var(--sans);
-          font-size: 14px;
+        .results-count {
+          font-size: 13px;
+          color: #888;
           font-style: italic;
-          color: var(--text-muted);
         }
  
-        .hp-sort-select {
-          font-family: var(--heading);
-          font-size: 11px;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          border: 1px solid var(--accent-border);
+        .sort-select {
+          font-family: 'Source Serif 4', serif;
+          font-size: 13px;
+          border: 1px solid #ddd;
           border-radius: 2px;
-          padding: 6px 12px;
-          background: var(--navy-surface);
-          color: var(--gold);
+          padding: 5px 10px;
+          background: #fff;
+          color: #555;
           cursor: pointer;
-          outline: none;
         }
  
-        .hp-sort-select:focus { border-color: var(--gold); }
- 
-        /* ─── tarjetas de documento ─── */
-        .hp-doc-card {
+        /* ─── cards de documento ─── */
+        .doc-card {
           display: flex;
-          gap: 20px;
-          padding: 20px 24px;
+          gap: 1.25rem;
+          padding: 1.25rem;
+          background: #fff;
+          border: 1px solid #e8e6e0;
+          border-radius: 2px;
           margin-bottom: 10px;
-          background: var(--navy-surface);
-          border: 1px solid var(--border);
-          border-radius: 3px;
-          transition: border-color 0.2s, box-shadow 0.2s;
+          transition: border-color 0.15s, box-shadow 0.15s;
           cursor: default;
         }
  
-        .hp-doc-card:hover {
-          border-color: var(--accent-border);
-          box-shadow: var(--shadow);
+        .doc-card:hover {
+          border-color: #c0392b;
+          box-shadow: 0 2px 12px rgba(192,57,43,0.08);
         }
  
-        .hp-doc-index {
-          font-family: var(--heading);
-          font-size: 28px;
+        .doc-index {
+          font-family: 'Playfair Display', serif;
+          font-size: 26px;
           font-weight: 700;
-          color: var(--border);
+          color: #ddd;
           line-height: 1;
-          min-width: 36px;
-          padding-top: 2px;
+          min-width: 30px;
+          padding-top: 3px;
           user-select: none;
-          letter-spacing: 0.04em;
         }
  
-        .hp-doc-body { flex: 1; min-width: 0; }
+        .doc-body { flex: 1; min-width: 0; }
  
-        .hp-doc-badges {
+        .doc-badges {
           display: flex;
-          gap: 6px;
+          gap: 5px;
           flex-wrap: wrap;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
  
-        .hp-doc-name {
-          font-family: var(--heading);
-          font-size: 15px;
-          font-weight: 600;
-          letter-spacing: 0.04em;
+        .badge {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          padding: 2px 7px;
+          border-radius: 1px;
+        }
+ 
+        .badge-pn { background: #e8f0f9; color: #003A72; }
+        .badge-gc { background: #e8f5e8; color: #1A5C1A; }
+        .badge-topic { background: #f5f3ee; color: #888; border: 1px solid #e0ddd6; }
+ 
+        .doc-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 16px;
+          font-weight: 700;
           line-height: 1.35;
-          margin-bottom: 8px;
-          color: var(--text-h);
+          margin-bottom: 6px;
+          color: #1a1a18;
         }
  
-        .hp-doc-excerpt {
-          font-family: var(--sans);
-          font-size: 14px;
-          color: var(--text);
+        .excerpt {
+          font-size: 13px;
+          font-weight: 300;
+          color: #666;
           line-height: 1.65;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
  
-        .hp-doc-filepath {
-          margin-top: 10px;
-          font-family: var(--mono);
+        .excerpt mark {
+          background: #fde8e8;
+          color: #c0392b;
+          border-radius: 1px;
+          padding: 0 2px;
+          font-style: normal;
+        }
+ 
+        .doc-filepath {
+          margin-top: 8px;
           font-size: 11px;
-          color: var(--text-muted);
+          color: #bbb;
+          font-style: italic;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
  
-        /* ─── estado vacío / inicial ─── */
-        .hp-state-box {
-          text-align: center;
-          padding: 80px 40px;
+        /* ─── paginación ─── */
+        .pagination {
           display: flex;
-          flex-direction: column;
+          justify-content: center;
           align-items: center;
-          gap: 12px;
+          gap: 6px;
+          margin-top: 2rem;
+          flex-wrap: wrap;
         }
  
-        .hp-state-ornament {
-          font-family: var(--heading);
-          font-size: 40px;
-          color: var(--border);
+        .page-btn {
+          padding: 6px 14px;
+          border: 1px solid #ddd;
+          border-radius: 2px;
+          background: #fff;
+          font-family: 'Source Serif 4', serif;
+          font-size: 13px;
+          color: #555;
+          cursor: pointer;
+          transition: all 0.1s;
+        }
+ 
+        .page-btn:hover { border-color: #c0392b; color: #c0392b; }
+ 
+        .page-btn.active {
+          background: #c0392b;
+          border-color: #c0392b;
+          color: #fff;
+        }
+ 
+        .page-btn:disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+        }
+ 
+        /* ─── estados vacíos ─── */
+        .state-box {
+          text-align: center;
+          padding: 5rem 2rem;
+        }
+ 
+        .state-icon {
+          font-size: 2.5rem;
+          color: #ddd;
+          margin-bottom: 1rem;
           line-height: 1;
-          letter-spacing: 0.2em;
-          margin-bottom: 8px;
         }
  
-        .hp-state-title {
-          font-family: var(--heading);
-          font-size: 18px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: var(--text-muted);
+        .state-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #444;
+          margin-bottom: 0.5rem;
         }
  
-        .hp-state-sub {
-          font-family: var(--sans);
+        .state-sub {
           font-size: 14px;
+          color: #aaa;
           font-style: italic;
-          color: var(--text-muted);
-          max-width: 360px;
         }
  
-        /* ─── responsive ─── */
-        @media (max-width: 768px) {
-          .hp-hero { padding: 40px 20px 40px; }
-          .hp-body { grid-template-columns: 1fr; }
-          .hp-sidebar { border-right: none; border-bottom: 1px solid var(--border); }
-          .hp-results { padding: 24px 20px; }
-          .hp-stats { flex-wrap: wrap; }
+        .loading-dots span {
+          display: inline-block;
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: #c0392b;
+          margin: 0 3px;
+          animation: bounce 1.2s infinite;
+        }
+ 
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+ 
+        @keyframes bounce {
+          0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+ 
+        .error-box {
+          background: #fdf0f0;
+          border: 1px solid #f5c6c6;
+          border-radius: 2px;
+          padding: 1rem 1.25rem;
+          margin-bottom: 1rem;
+          font-size: 13px;
+          color: #c0392b;
         }
       `}</style>
 
-      <div className="hp-page">
+      {/* ─── HERO ─── */}
+      <header className="hero">
+        <h1 className="title">Oposearch</h1>
+        <p className="subtitle">Fuerzas y Cuerpos de Seguridad del Estado</p>
+        <p className="desc">
+          Accede a la documentación oficial indexada para las oposiciones a
+          Policía Nacional y Guardia Civil. Busca por texto libre, filtra por
+          cuerpo o tema y localiza cualquier norma al instante.
+        </p>
 
-        {/* ─── HERO ─── */}
-        <header className="hp-hero">
-          <h1 className="hp-title">Oposearch</h1>
-          <p className="hp-subtitle">Fuerzas y Cuerpos de Seguridad del Estado</p>
-          <p className="hp-desc">
-            Accede a la documentación oficial indexada para las oposiciones a
-            Policía Nacional y Guardia Civil. Busca por texto libre, filtra por
-            cuerpo o tema y localiza cualquier norma al instante.
-          </p>
+        {/* barra de búsqueda */}
+        <div className="search-wrap">
+          <input
+            ref={inputRef}
+            className="search-input"
+            type="text"
+            placeholder="Busca un tema, ley, reglamento…"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
+          />
+          <button className="search-btn" onClick={handleSearch} aria-label="Buscar">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6" />
+              <line x1="16.5" y1="16.5" x2="21" y2="21" />
+            </svg>
+          </button>
+        </div>
+      </header>
 
-          {/* barra de búsqueda */}
-          <div className="hp-search-wrap">
-            <input
-              className="hp-search-input"
-              type="text"
-              placeholder="Busca un tema, ley, reglamento…"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              autoComplete="off"
-            />
-            <button className="hp-search-btn" onClick={handleSearch} aria-label="Buscar">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="6" />
-                <line x1="16.5" y1="16.5" x2="21" y2="21" />
-              </svg>
+      {/* ─── BODY ─── */}
+      <div className="body-section">
+
+        {/* ─── SIDEBAR ─── */}
+        <aside className="sidebar">
+
+            {/* Filtro por cuerpo */}
+            <div className="filter-group">
+            <span className="filter-group-label">Cuerpo</span>
+
+            <button
+              className={`chip ${force === "" ? "active" : ""}`}
+              onClick={() => handleForceFilter("")}
+            >
+              <span className="chip-dot" />
+              Todos los cuerpos
             </button>
-          </div>
-        </header>
 
-        {/* ─── BODY ─── */}
-        <div className="hp-body">
-
-          {/* ─── SIDEBAR ─── */}
-          <aside className="hp-sidebar">
-
-              {/* Filtro por cuerpo */}
-              <div className="hp-filter-group">
-              <span className="hp-filter-label">Cuerpo</span>
- 
+            {(["policia_nacional", "guardia_civil"] as Force[]).map((f) => (
               <button
-                className={`hp-chip ${force === "" ? "active" : ""}`}
-                onClick={() => handleForceChange("")}
+                key={f}
+                className={`filter-chip ${force === f ? "active" : ""}`}
+                onClick={() => handleForceFilter(f)}
               >
-                <span className="hp-chip-dot" />
-                Todos los cuerpos
-              </button>
- 
-              <button
-                className={`hp-chip ${force === "policia_nacional" ? "active" : ""}`}
-                onClick={() => handleForceChange("policia_nacional")}
-              >
-                <span className="hp-chip-icon hp-chip-icon-pn">PN</span>
-                Policía Nacional
-              </button>
- 
-              <button
-                className={`hp-chip ${force === "guardia_civil" ? "active" : ""}`}
-                onClick={() => handleForceChange("guardia_civil")}
-              >
-                <span className="hp-chip-icon hp-chip-icon-gc">GC</span>
-                Guardia Civil
-              </button>
-            </div>
-
-            <div className="hp-divider" />
-
-            {/* Filtro por tema */}
-            <div className="hp-filter-group">
-              <span className="hp-filter-label">Tema</span>
- 
-              <button
-                className={`hp-chip ${topic === "" ? "active" : ""}`}
-                onClick={() => setTopic("")}
-              >
-                <span className="hp-chip-dot" />
-                Todos los temas
-              </button>
- 
-              {visibleTopics.map((t) => (
-                <button
-                  key={`${t.force}-${t.number}`}
-                  className={`hp-chip ${topic === t.number && force === t.force ? "active" : ""}`}
-                  onClick={() => { setTopic(t.number); setForce(t.force); }}
-                  title={t.title}
+                <span
+                  className={`chip-icon ${f === "policia_nacional" ? "chip-icon-pn" : "chip-icon-gc"}`}
                 >
-                  <span className="hp-chip-dot" />
-                  <span className="hp-chip-title">{t.title}</span>
-                  <span className="hp-chip-num">{t.number}</span>
+                  {f === "policia_nacional" ? "PN" : "GC"}
+                </span>
+                {FORCE_LABELS[f]}
+              </button>
+            ))}
+          </div>
+
+          <div className="divider" />
+
+          {/* Filtro por tema */}
+          <div className="filter-group">
+            <span className="filter-label">Tema</span>
+
+            {topicsLoading ? (
+              <p className="topics-loading">Cargando temas…</p>
+            ) : (
+              <>
+                <button
+                  className={`filter-chip ${topic === "" ? "active" : ""}`}
+                  onClick={() => handleTopicFilter("")}
+                >
+                  <span className="chip-dot" />
+                  Todos los temas
                 </button>
-              ))}
-            </div>
+ 
+                {topics.map((t) => (
+                  <button
+                    key={`${t.force}-${t.number}`}
+                    className={`filter-chip ${topic === t.number ? "active" : ""}`}
+                    onClick={() => handleTopicFilter(t.number)}
+                    title={t.title}
+                  >
+                    <span className="chip-dot" />
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {t.title}
+                    </span>
+                    <span className="chip-num">{t.number}</span>
+                  </button>
+                ))}
 
-          </aside>
-
-          {/* ─── RESULTADOS ─── */}
-          <main className="hp-results">
-            <div className="hp-results-header">
-              <span className="hp-results-count">
-                {hasSearched
-                  ? `${MOCK_DOCS.length} documentos encontrados`
-                  : "Introduce una búsqueda para empezar"}
-              </span>
-              
-              <select
-                className="hp-sort-select"
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortOption)}
-              >
-                <option value="relevance">Más relevante</option>
-                <option value="name_asc">Nombre A–Z</option>
-                <option value="name_desc">Nombre Z–A</option>
-              </select>
-            </div>
-
-            {/* estado inicial */}
-            {!hasSearched && (
-              <div className="hp-state-box">
-                <div className="hp-state-ornament">⚖</div>
-                <p className="hp-state-title">Empieza tu búsqueda</p>
-                <p className="hp-state-sub">
-                  Escribe un término en el buscador o selecciona un cuerpo y un tema
-                  para explorar la documentación oficial.
-                </p>
-              </div>
+            {topics.length === 0 && (
+                  <p className="topics-loading">Sin temas disponibles</p>
+                )}
+              </>
             )}
+          </div>
 
-             {/* lista de documentos mock */}
-             {hasSearched && MOCK_DOCS.map((doc, i) => (
-              <article className="hp-doc-card" key={doc.id}>
-                <div className="hp-doc-index">
-                  {String(i + 1).padStart(2, "0")}
+        </aside>
+
+        {/* ─── RESULTADOS ─── */}
+        <main className="results-area">
+          <div className="results-header">
+            <span className="results-count">
+              {!hasSearched
+                ? "Introduce una búsqueda para empezar"
+                : loading
+                ? "Buscando…"
+                : total !== null
+                ? `${total.toLocaleString()} documento${total !== 1 ? "s" : ""} encontrado${total !== 1 ? "s" : ""}`
+                : ""}
+            </span>
+            
+            <select
+              className="sort-select"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortOption)}
+            >
+              {(Object.keys(SORT_LABELS) as SortOption[]).map((k) => (
+                <option key={k} value={k}>{SORT_LABELS[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* error */}
+          {error && <div className="error-box">Error: {error}</div>}
+ 
+          {/* loading */}
+          {loading && (
+            <div className="state-box">
+              <div className="loading-dots">
+                <span /><span /><span />
+              </div>
+            </div>
+          )}
+
+          {/* estado inicial */}
+          {!hasSearched && !loading && (
+            <div className="state-box">
+              <div className="state-icon">⚖</div>
+              <p className="state-title">Empieza tu búsqueda</p>
+              <p className="state-sub">
+                Escribe un término en el buscador o selecciona un cuerpo y un tema
+                para explorar la documentación oficial.
+              </p>
+            </div>
+          )}
+
+          {/* sin resultados */}
+          {hasSearched && !loading && !error && documents.length === 0 && (
+            <div className="state-box">
+              <div className="state-icon">◎</div>
+              <p className="state-title">Sin resultados</p>
+              <p className="state-sub">Prueba con otros términos o elimina algún filtro.</p>
+            </div>
+          )}
+
+            {/* lista de documentos */}
+            {!loading && documents.map((doc, i) => {
+            const excerpt = getExcerpt(doc);
+            const globalIndex = (page - 1) * LIMIT + i + 1;
+ 
+            return (
+              <article className="doc-card" key={doc.id}>
+                <div className="doc-index">
+                  {String(globalIndex).padStart(2, "0")}
                 </div>
-                <div className="hp-doc-body">
-                  <div className="hp-doc-badges">
+                <div className="doc-body">
+                  <div className="doc-badges">
                     {doc.forces.map((f) => (
                       <ForceBadge key={f} force={f} />
                     ))}
-                    {doc.topics.map((t) => (
-                      <TopicBadge key={`${t.force}-${t.number}`} number={t.number} force={t.force} />
+                    {doc.topics.slice(0, 2).map((t) => (
+                      <span key={`${t.force}-${t.number}`} className="badge badge-topic">
+                        Tema {t.number}
+                      </span>
                     ))}
                   </div>
-                  <div className="hp-doc-name">{doc.name}</div>
-                  <p className="hp-doc-excerpt">{doc.excerpt}</p>
-                  <div className="hp-doc-filepath">{doc.filePath}</div>
+ 
+                  {/* nombre: puede venir con <mark> del highlight */}
+                  {doc.highlights?.name?.length ? (
+                    <div
+                      className="doc-name"
+                      dangerouslySetInnerHTML={{ __html: doc.highlights.name[0] }}
+                    />
+                  ) : (
+                    <div className="doc-name">{doc.name}</div>
+                  )}
+ 
+                  {excerpt && <Highlight html={excerpt} />}
+ 
+                  {doc.filePath && (
+                    <div className="doc-filepath">{doc.filePath}</div>
+                  )}
                 </div>
               </article>
-            ))}
-          </main>
-
-        </div>
-
+            );
+          })}
+ 
+          {/* paginación */}
+          {totalPages > 1 && !loading && (
+            <nav className="pagination" aria-label="Paginación">
+              <button
+                className="page-btn"
+                onClick={() => doSearch(page - 1)}
+                disabled={page <= 1}
+              >
+                ← Anterior
+              </button>
+ 
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, idx) => {
+                const p = idx + 1;
+                return (
+                  <button
+                    key={p}
+                    className={`page-btn ${p === page ? "active" : ""}`}
+                    onClick={() => doSearch(p)}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+ 
+              {totalPages > 7 && page < totalPages && (
+                <>
+                  <span style={{ color: "#aaa" }}>…</span>
+                  <button className="page-btn" onClick={() => doSearch(totalPages)}>
+                    {totalPages}
+                  </button>
+                </>
+              )}
+ 
+              <button
+                className="page-btn"
+                onClick={() => doSearch(page + 1)}
+                disabled={page >= totalPages}
+              >
+                Siguiente →
+              </button>
+            </nav>
+          )}
+        </main>
       </div>
-
-
     </>
   );
 }
