@@ -93,7 +93,7 @@ export function HomePage() {
   );
 
   useEffect(() => {
-    if (hasSearched) doSearch(1);
+    if (force || topic) doSearch(1);
   }, [force, topic, sort]);
 
   function handleSearch() {
@@ -111,10 +111,12 @@ export function HomePage() {
  
   function handleForceFilter(value: Force) {
     setForce(value);
+    setHasSearched(true);
   }
  
   function handleTopicFilter(value: number | "") {
     setTopic(value);
+    setHasSearched(true);
   }
 
   function getExcerpt(doc: DocumentHit): string {
