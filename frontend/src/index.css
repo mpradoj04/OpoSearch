@@ -1,23 +1,33 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --text: #8a95a8;
+  --text-h: #e8ecf2;
+  --bg: #0a0e1a;
+  --border: #1e2a3d;
+  --code-bg: #111827;
+  --accent: #c9a84c;
+  --accent-bg: rgba(201, 168, 76, 0.12);
+  --accent-border: rgba(201, 168, 76, 0.45);
+  --social-bg: rgba(30, 42, 61, 0.6);
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.5) 0 10px 15px -3px,
+    rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  --navy-deep: #050810;
+  --navy-mid: #0d1526;
+  --navy-surface: #131f35;
+  --gold: #c9a84c;
+  --gold-light: #e2c97e;
+  --gold-dark: #9a7a2e;
+  --text-muted: #5a6578;
+
+  --sans: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --heading: 'Cinzel', 'Trajan Pro', Georgia, serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
+  font: 18px/155% var(--sans);
+  letter-spacing: 0.22px;
+  color-scheme: dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -30,24 +40,38 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+/* Modo claro */
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: #3d4a5c;
+    --text-h: #0d1526;
+    --bg: #f0f2f7;
+    --border: #c8cdd8;
+    --code-bg: #e4e8f0;
+    --accent: #8a6420;
+    --accent-bg: rgba(138, 100, 32, 0.1);
+    --accent-border: rgba(138, 100, 32, 0.4);
+    --social-bg: rgba(200, 205, 216, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.12) 0 10px 15px -3px,
+      rgba(0, 0, 0, 0.07) 0 4px 6px -2px;
+    --navy-surface: #e0e4ee;
+    --gold: #8a6420;
+    --gold-light: #b08030;
+    --text-muted: #8a95a8;
   }
+}
+
+/* ─── Fondo ─── */
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 168, 76, 0.07) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 #root {
@@ -55,57 +79,114 @@
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-}
-
+/* ─── Tipografía ─── */
 h1,
 h2 {
   font-family: var(--heading);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-h);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
+  font-size: 52px;
+  letter-spacing: 0.08em;
   margin: 32px 0;
+  background: linear-gradient(135deg,
+      var(--gold-light) 0%,
+      var(--gold) 50%,
+      var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 100%;
+
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: 32px;
     margin: 20px 0;
   }
 }
+
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
+  font-size: 22px;
+  line-height: 128%;
+  letter-spacing: 0.06em;
   margin: 0 0 8px;
+  color: var(--gold-light);
+
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
+
 p {
   margin: 0;
+  line-height: 1.7;
+}
+
+/* ─── Elementos de apoyo ─── */
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--gold-light);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
 }
 
 code,
-.counter {
+pre {
   font-family: var(--mono);
-  display: inline-flex;
+  background: var(--code-bg);
+  border: 1px solid var(--accent-border);
   border-radius: 4px;
-  color: var(--text-h);
+  font-size: 0.875em;
 }
 
 code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  padding: 2px 6px;
+}
+
+pre {
+  padding: 16px;
+  overflow-x: auto;
+  text-align: left;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-mid);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ─── Selección de texto ─── */
+::selection {
+  background: var(--accent-bg);
+  color: var(--gold-light);
 }
