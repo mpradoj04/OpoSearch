@@ -188,7 +188,7 @@ services:
     ports:
       - ${APP_PORT}:3000
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
       - ELASTIC_HOSTS=https://es01:9200
       - ELASTIC_USER=${ELASTIC_USER}
