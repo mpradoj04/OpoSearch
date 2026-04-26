@@ -1,5 +1,6 @@
 const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
+const Topic = require("../models/Topic")
 
 const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, sort = "relevance") => {
   try {
@@ -116,6 +117,33 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
   }
 };
 
+const getTopics = async (force) => {
+  try {
+    const filter = force ? { force } : {};
+ 
+    const topics = await Topic.find(filter)
+      .select("number title force block")
+      .sort({ force: 1, number: 1 })
+      .lean();
+ 
+    logger.info("Topics fetched", {
+      context: "SearchService",
+      force: force || null,
+      total: topics.length,
+    });
+ 
+    return topics;
+  } catch (error) {
+    logger.error(`Error fetching topics: ${error.message}`, {
+      context: "SearchService",
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+};
+
 module.exports = {
   searchDocuments,
+  getTopics,
 };

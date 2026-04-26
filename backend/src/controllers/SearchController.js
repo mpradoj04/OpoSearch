@@ -1,4 +1,5 @@
 const searchService = require("../services/SearchService");
+const Topic = require("../models/Topic");
 
 const search = async (req, res) => {
   try {
@@ -66,6 +67,26 @@ const search = async (req, res) => {
   }
 };
 
+const getTopics = async (req, res) => {
+  try {
+    const { force } = req.query;
+ 
+    if (force && force !== "guardia_civil" && force !== "policia_nacional") {
+      return res.status(400).json({
+        error: "The 'force' parameter must be either 'guardia_civil' or 'policia_nacional'.",
+      });
+    }
+ 
+    const topics = await searchService.getTopics(force);
+ 
+    return res.status(200).json({ topics });
+  } catch (error) {
+    console.error("Error fetching topics:", error);
+    return res.status(500).json({ error: "Internal error while fetching topics" });
+  }
+};
+
 module.exports = {
   search,
+  getTopics,
 };
