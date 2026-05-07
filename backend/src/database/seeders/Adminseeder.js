@@ -10,7 +10,7 @@ const adminSeeder = async () => {
   const user = new User({
     name: "Admin",
     email: "admin@example.com",
-    password: "expample1234",
+    password: "Password_1234",
     role: "admin",
   });
  
