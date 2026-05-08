@@ -8,7 +8,6 @@ import {
   type TopicItem,
 } from "../services/SearchService";
 import { ForceBadge } from "../components/ForceBadge";
-import { TopicBadge } from "../components/TopicBadge";
 
 const FORCE_LABELS: Record<string, string> = {
   policia_nacional: "Policía Nacional",
