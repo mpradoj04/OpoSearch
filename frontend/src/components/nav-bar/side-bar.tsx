@@ -30,7 +30,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-	{ icon: <IconHome />, label: "Inicio", href: "/search" },
+	// { icon: <IconHome />, label: "Inicio", href: "/search" },
 	// { icon: <IconUser />, label: "Perfil", href: "/profile", authRequired: true },
 	{ icon: <IconSearch />, label: "Búsqueda", href: "/search", authRequired: true },
 ]
@@ -39,12 +39,14 @@ function NavItemComponent({
 	item,
 	active,
 	isAuthenticated,
+  isLoading,
 }: {
 	item: NavItem;
 	active: boolean;
 	isAuthenticated: boolean;
+  isLoading: boolean;
 }) {
-	const href = item.authRequired && !isAuthenticated ? "/login" : item.href;
+	const href = item.authRequired && !isAuthenticated && !isLoading ? "/login" : item.href;
 	const label = item.authRequired && !isAuthenticated ? "Acceder" : item.label;
 
 	return (
@@ -72,7 +74,7 @@ function NavItemComponent({
 
 export function SideBar() {
 	const location = useLocation();
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated, isLoading  } = useAuth();
 
 	return (
 		<>
@@ -125,6 +127,7 @@ export function SideBar() {
                   : location.pathname.startsWith(item.href)
               }
               isAuthenticated={isAuthenticated}
+              isLoading={isLoading}
             />
           ))}
         </div>

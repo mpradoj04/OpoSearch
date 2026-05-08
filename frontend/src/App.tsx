@@ -6,7 +6,7 @@ import { AdminPage } from "./screens/AdminPage";
 import { HomePage } from "./screens/HomePage";
 import { Login } from "./screens/LoginPage";
 import { Register } from "./screens/RegisterPage";
-import { ResultsPage } from "./screens/ResultsPage";
+import { SearchPage } from "./screens/SearchPage";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -42,10 +42,10 @@ export default function App() {
               }
             />
             <Route
-              path="/results"
+              path="/search"
               element={
                 <ProtectedRoute role="opositor">
-                  <ResultsPage />
+                  <SearchPage />
                 </ProtectedRoute>
               }
             />
