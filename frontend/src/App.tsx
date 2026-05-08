@@ -1,54 +1,69 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { Navbar } from "./components/Navbar";
+import { SideBar } from "./components/nav-bar/side-bar";
 import { AdminPage } from "./screens/AdminPage";
 import { HomePage } from "./screens/HomePage";
 import { Login } from "./screens/LoginPage";
 import { Register } from "./screens/RegisterPage";
 import { ResultsPage } from "./screens/ResultsPage";
 
+function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const isPublic = ["/login", "/register"].includes(location.pathname);
+
+  return (
+    <>
+      {!isPublic && <SideBar />}
+      <main style={{ marginLeft: isPublic ? "0" : "64px" }}>
+        {children}
+      </main>
+    </>
+  )
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
-        <Routes>
-          {/* Públicas */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        <Layout>
+          <Routes>
+            {/* Públicas */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Opositor */}
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute role="opositor">
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/results"
-            element={
-              <ProtectedRoute role="opositor">
-                <ResultsPage />
-              </ProtectedRoute>
-            }
-          />
+            {/* Opositor */}
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute role="opositor">
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/results"
+              element={
+                <ProtectedRoute role="opositor">
+                  <ResultsPage />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Admin */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
+            {/* Admin */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminPage />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Layout>
       </BrowserRouter>
     </AuthProvider>
   );
