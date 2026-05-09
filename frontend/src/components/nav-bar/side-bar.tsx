@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
+import { useTheme } from "../../context/ThemeContext";
 
 const IconHome = () => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
@@ -19,6 +20,26 @@ const IconUser = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="8" r="4" />
     <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+  </svg>
+);
+
+const IconSun = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="4" />
+    <line x1="12" y1="2" x2="12" y2="4" />
+    <line x1="12" y1="20" x2="12" y2="22" />
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <line x1="2" y1="12" x2="4" y2="12" />
+    <line x1="20" y1="12" x2="22" y2="12" />
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </svg>
+);
+ 
+const IconMoon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
 
@@ -75,6 +96,7 @@ function NavItemComponent({
 export function SideBar() {
 	const location = useLocation();
 	const { isAuthenticated, isLoading  } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
 	return (
 		<>
@@ -130,6 +152,26 @@ export function SideBar() {
               isLoading={isLoading}
             />
           ))}
+        </div>
+
+        {/* ─── botón tema ─── */}
+        <div className="flex justify-center pb-3 shrink-0">
+          <button
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+            className={[
+              "flex items-center justify-center",
+              "w-10 h-10 rounded-[3px] border cursor-pointer",
+              "transition-all duration-150",
+              "border-transparent text-[var(--text-muted)]",
+              "hover:bg-[var(--accent-bg)] hover:border-[var(--accent-border)] hover:text-[var(--gold-light)]",
+            ].join(" ")}
+            style={{ background: "transparent" }}
+          >
+            <span className="flex items-center justify-center w-5 h-5">
+              {theme === "dark" ? <IconSun /> : <IconMoon />}
+            </span>
+          </button>
         </div>
 
 				 {/* ─── ornamento dorado ─── */}

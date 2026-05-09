@@ -16,7 +16,7 @@ export function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate("/home");
+      navigate("/search");
     } catch (err) {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
     } finally {

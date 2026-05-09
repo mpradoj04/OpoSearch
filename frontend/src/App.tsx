@@ -7,6 +7,7 @@ import { HomePage } from "./screens/HomePage";
 import { Login } from "./screens/LoginPage";
 import { Register } from "./screens/RegisterPage";
 import { SearchPage } from "./screens/SearchPage";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -24,47 +25,49 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            {/* Públicas */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              {/* Públicas */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* Opositor */}
-            <Route
-              path="/home"
-              element={
-                <ProtectedRoute role="opositor">
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <ProtectedRoute role="opositor">
-                  <SearchPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Opositor */}
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute role="opositor">
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  <ProtectedRoute role="opositor">
+                    <SearchPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Admin */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute role="admin">
-                  <AdminPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Admin */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </AuthProvider>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
