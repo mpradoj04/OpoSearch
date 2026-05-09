@@ -7,4 +7,6 @@ router.get("/", isAuthenticated, searchController.search);
 
 router.get("/topics", isAuthenticated, searchController.getTopics);
 
+router.get("/document/:id", isAuthenticated, searchController.showDocument);
+
 module.exports = router;

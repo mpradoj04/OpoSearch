@@ -2,6 +2,8 @@ const { client } = require("../config/elasticsearch");
 const logger = require("../config/logger");
 const Topic = require("../models/Topic")
 
+const INDEX_NAME = "docs_oposearch";
+
 const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, sort = "relevance") => {
   try {
     const filters = [];
@@ -54,7 +56,7 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
     const from = (page - 1) * limit;
 
     const response = await client.search({
-      index: "docs_oposearch",
+      index: INDEX_NAME,
       from: from,
       size: limit,
       body: {
@@ -117,6 +119,36 @@ const searchDocuments = async (queryText, force, topic, page = 1, limit = 10, so
   }
 };
 
+const showDocument = async (id, highlight = {}) => {
+  try {
+    const response = await client.get({
+      index: INDEX_NAME,
+      id: id,
+    });
+
+    logger.info("Document fetched", {
+      context: "SearchService",
+      id: id,
+      highlight: highlight || null,
+    });
+
+    return {
+      id: response._id,
+      text: response._source.text,
+      name: response._source.name,
+      highlights: highlight,
+    }
+  } catch (error) {
+    logger.error(`Error fetching document: ${error.message}`, {
+      context: "SearchService",
+      id: id,
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
+};
+
 const getTopics = async (force) => {
   try {
     const filter = force ? { force } : {};
@@ -146,4 +178,5 @@ const getTopics = async (force) => {
 module.exports = {
   searchDocuments,
   getTopics,
+  showDocument,
 };

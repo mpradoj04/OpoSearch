@@ -67,6 +67,20 @@ const search = async (req, res) => {
   }
 };
 
+const showDocument = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { highlight } = req.query;
+
+    const document = await searchService.showDocument(id, highlight);
+
+    return res.status(200).json({ document });
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return res.status(error.status || 500).json({ error: error.message || "Internal error while fetching the document" });
+  }
+};
+
 const getTopics = async (req, res) => {
   try {
     const { force } = req.query;
@@ -89,4 +103,5 @@ const getTopics = async (req, res) => {
 module.exports = {
   search,
   getTopics,
+  showDocument,
 };
