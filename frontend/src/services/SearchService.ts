@@ -57,3 +57,16 @@ export async function fetchTopics(force?: Force): Promise<TopicItem[]> {
   const data = await apiClient.get<{ topics: TopicItem[] }>(`/search/topics${qs}`);
   return data.topics;
 }
+
+export interface DocumentDetail {
+  id: string;
+  name: string;
+  text: string;
+  highlights: Record<string, string[]>;
+}
+
+export async function fetchDocument(id: string, highlight?: string): Promise<DocumentDetail> {
+  const qs = highlight ? `?highlight=${encodeURIComponent(highlight)}` : "";
+  const data = await apiClient.get<{ document: DocumentDetail }>(`/search/document/${id}${qs}`);
+  return data.document;
+}

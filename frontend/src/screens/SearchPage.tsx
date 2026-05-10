@@ -8,6 +8,7 @@ import {
   type TopicItem,
 } from "../services/SearchService";
 import { ForceBadge } from "../components/ForceBadge";
+import { useNavigate } from "react-router-dom";
 
 const FORCE_LABELS: Record<string, string> = {
   policia_nacional: "Policía Nacional",
@@ -48,6 +49,7 @@ export function SearchPage() {
   const [topicsLoading, setTopicsLoading] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTopicsLoading(true);
@@ -441,6 +443,7 @@ export function SearchPage() {
               }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--accent-border)")}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
+                onClick={() => navigate(`/document/${doc.id}`, { state: { query } })}
               >
                 <div style={{
                   fontFamily: "var(--heading)", fontSize: "28px", fontWeight: 700,

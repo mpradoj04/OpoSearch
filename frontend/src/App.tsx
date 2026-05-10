@@ -8,6 +8,7 @@ import { Login } from "./screens/LoginPage";
 import { Register } from "./screens/RegisterPage";
 import { SearchPage } from "./screens/SearchPage";
 import { ThemeProvider } from "./context/ThemeContext";
+import { DocumentPage } from "./screens/DocumentPage";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -48,6 +49,15 @@ export default function App() {
                 element={
                   <ProtectedRoute role="opositor">
                     <SearchPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/document/:id"
+                element={
+                  <ProtectedRoute role="opositor">
+                    <DocumentPage />
                   </ProtectedRoute>
                 }
               />
