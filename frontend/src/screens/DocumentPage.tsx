@@ -5,12 +5,13 @@ import { fetchDocument, type DocumentDetail } from "../services/SearchService";
 /* ── helpers ── */
 
 // Detecta si una línea es un título/cabecera del documento
-function getLineType(line: string): "title" | "chapter" | "article" | "section" | "normal" {
+function getLineType(line: string): "title" | "chapter" | "article" | "section" | "articleSection" | "normal" {
   const t = line.trim();
   if (!t) return "normal";
-  if (/^TÍTULO\s+[IVXLCDM]+/i.test(t) || /^TÍTULO\s+PRELIMINAR/i.test(t)) return "title";
-  if (/^CAPÍTULO\s+[IVXLCDM]+/i.test(t)) return "chapter";
-  if (/^Artículo\s+\d+/i.test(t) || /^Artículo\s+\d+\s+bis/i.test(t)) return "article";
+  if (/^TITULO\s+[IVXLCDM]+/i.test(t) || /^TITULO\s+PRELIMINAR/i.test(t) || /^TITULO\s+PRIMERO(.*)$/im.test(t)) return "title";
+  if (/^CAPITULO\s+[IVXLCDM]+/i.test(t) || /^CAPITULO\s+PRIMERO/i.test(t)) return "chapter";
+  if (/^Artículo\s+\d+/i.test(t) || /^Artículo\s+\d+\s+bis/i.test(t) || /^Art.\s+\d+/i.test(t) || /^Art.\s+\d+\s+bis/i.test(t)) return "article";
+  if (/^SECCION\s+[IVXLCDM]+/i.test(t)) return "section";
   if (
     /^Disposición\s+(adicional|transitoria|derogatoria|final)/i.test(t) ||
     /^EXPOSICIÓN\s+DE\s+MOTIVOS/i.test(t) ||
@@ -18,7 +19,7 @@ function getLineType(line: string): "title" | "chapter" | "article" | "section" 
     /^PREÁMBULO/i.test(t) ||
     /^ANEXO/i.test(t) ||
     /^ÍNDICE/i.test(t)
-  ) return "section";
+  ) return "articleSection";
   return "normal";
 }
 
@@ -78,6 +79,21 @@ function renderLines(text: string) {
         </h3>
       );
       i++;
+    } else if (type === "section") {
+      elements.push(
+        <h4 key={key++} style={{
+          fontFamily: "var(--heading)",
+          fontSize: "10px",
+          fontWeight: 500,
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
+          color: "var(--gold-dark)",
+          margin: "2rem 0 0.5rem",
+        }}>
+          {trimmed}
+        </h4>
+      );
+      i++;
     } else if (type === "article") {
       elements.push(
         <p key={key++} style={{
@@ -92,7 +108,7 @@ function renderLines(text: string) {
         </p>
       );
       i++;
-    } else if (type === "section") {
+    } else if (type === "articleSection") {
       elements.push(
         <p key={key++} style={{
           fontFamily: "var(--heading)",
