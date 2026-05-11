@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { fetchDocument, type DocumentDetail } from "../services/SearchService";
 
@@ -30,7 +30,40 @@ function isContinuation(line: string): boolean {
   return !/[.;:?!»)\d]$/.test(line.trim());
 }
 
-function renderLines(text: string) {
+// Envuelve todas las coincidencias de `query` en <mark data-hl="N">
+function highlightText(text: string, query: string, counter: { n: number }): string {
+  if (!query) return escapeHtml(text);
+
+  const normalize = (s: string) =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const normalizedText = normalize(text);
+  const q = normalize(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  let result = "";
+  let lastIndex = 0;
+
+  for (const match of normalizedText.matchAll(new RegExp(q, "gi"))) {
+    const start = match.index!;
+    const end = start + match[0].length;
+    result += escapeHtml(text.slice(lastIndex, start));
+    const idx = counter.n++;
+    result += `<mark data-hl="${idx}" id="hl-${idx}" style="background:var(--accent-bg);color:var(--gold-light);border-radius:1px;padding:0 2px;font-style:normal;">${escapeHtml(text.slice(start, end))}</mark>`;
+    lastIndex = end;
+  }
+
+  return result + escapeHtml(text.slice(lastIndex));
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderLines(text: string, query: string, counter: { n: number }) {
   const lines = text.split("\n");
   const elements: React.ReactNode[] = [];
   let key = 0;
@@ -135,17 +168,20 @@ function renderLines(text: string) {
         i++;
         parts.push(lines[i].trim());
       }
+      const joined = parts.join(" ");
+      const html = highlightText(joined, query, counter);
       elements.push(
-        <p key={key++} style={{
-          fontFamily: "var(--sans)",
-          fontSize: "15px",
-          color: "var(--text)",
-          lineHeight: 1.8,
-          margin: "0 0 0.8rem",
-          textAlign: "justify",
-        }}>
-          {parts.join(" ")}
-        </p>
+        <p key={key++}
+          style={{
+            fontFamily: "var(--sans)",
+            fontSize: "15px",
+            color: "var(--text)",
+            lineHeight: 1.8,
+            margin: "0 0 0.8rem",
+            textAlign: "justify",
+          }}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       );
       i++;
     }
@@ -166,6 +202,10 @@ export function DocumentPage() {
   const [doc, setDoc] = useState<DocumentDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hlIndex, setHlIndex] = useState(0);
+  const [hlTotal, setHlTotal] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const hlCounter = { n: 0 };
 
   useEffect(() => {
     if (!id) return;
@@ -175,6 +215,29 @@ export function DocumentPage() {
       .catch((e) => setError(e.message ?? "Error al cargar el documento"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Contar marks tras renderizar
+  useEffect(() => {
+    if (!doc || loading) return;
+    const marks = contentRef.current?.querySelectorAll("mark[data-hl]");
+    setHlTotal(marks?.length ?? 0);
+    setHlIndex(0);
+    if (marks && marks.length > 0) {
+      marks[0].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [doc, loading]);
+
+  const goToHl = useCallback((dir: 1 | -1) => {
+    const marks = contentRef.current?.querySelectorAll("mark[data-hl]");
+    if (!marks || marks.length === 0) return;
+    const next = (hlIndex + dir + marks.length) % marks.length;
+    setHlIndex(next);
+    (marks[next] as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
+    // Pulso visual
+    const el = marks[next] as HTMLElement;
+    el.style.outline = "2px solid var(--gold)";
+    setTimeout(() => { el.style.outline = ""; }, 600);
+  }, [hlIndex]);
 
   return (
     <div style={{ minHeight: "100svh", background: "var(--bg)", display: "flex", flexDirection: "column" }}>
@@ -242,6 +305,43 @@ export function DocumentPage() {
             Documentación Oficial · Oposearch
           </p>
         </div>
+
+        {/* navegación de highlights */}
+        {searchQuery && hlTotal > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <span style={{
+              fontFamily: "var(--heading)",
+              fontSize: "11px",
+              letterSpacing: "0.1em",
+              color: "var(--gold)",
+              minWidth: "60px",
+              textAlign: "center",
+            }}>
+              {hlIndex + 1} / {hlTotal}
+            </span>
+            {([[-1, "↑"], [1, "↓"]] as [1|-1, string][]).map(([dir, icon]) => (
+              <button
+                key={dir}
+                onClick={() => goToHl(dir)}
+                style={{
+                  width: "32px", height: "32px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "transparent",
+                  border: "1px solid var(--accent-border)",
+                  borderRadius: "2px",
+                  color: "var(--gold)",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "var(--accent-bg)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* ── cuerpo ── */}
@@ -299,7 +399,7 @@ export function DocumentPage() {
               </div>
 
               {/* texto del documento */}
-              <div>{renderLines(doc.text)}</div>
+              <div ref={contentRef}>{renderLines(doc.text, searchQuery, hlCounter)}</div>
             </>
           )}
         </div>
